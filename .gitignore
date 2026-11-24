@@ -9,6 +9,7 @@ raycast/raycast-env.d.ts
 .data/
 .env
 .dev.vars
+wrangler.local.toml
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal

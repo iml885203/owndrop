@@ -1,0 +1,16 @@
+# Cloudflare Wrangler local development secrets (.dev.vars)
+OWNDROP_ORIGIN=http://127.0.0.1:8787
+OWNDROP_PASSWORD=local-dev-password-1234
+OWNDROP_SESSION_SECRET=local-dev-session-secret-at-least-32-chars
+
+# Optional: Enable R2 Presigned URL direct uploads (> 90 MB files)
+# OWNDROP_R2_ACCOUNT_ID=
+# OWNDROP_R2_BUCKET_NAME=owndrop-files
+# OWNDROP_R2_ACCESS_KEY_ID=
+# OWNDROP_R2_SECRET_ACCESS_KEY=
+
+# Optional: Standard OIDC (Pocket ID, Authentik, etc.)
+# OWNDROP_OIDC_ISSUER=
+# OWNDROP_OIDC_CLIENT_ID=
+# OWNDROP_OIDC_CLIENT_SECRET=
+# OWNDROP_OIDC_REQUIRED_GROUP=

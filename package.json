@@ -1,0 +1,35 @@
+{
+  "name": "owndrop",
+  "version": "1.0.0",
+  "description": "Open-source personal cross-device drop & clipboard hub — Cloudflare Native ($0/mo) and Docker self-hostable.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev:cf": "wrangler dev",
+    "dev:node": "tsx watch server/adapters/node/index.ts",
+    "dev:web": "npm --prefix web run dev",
+    "build:web": "npm --prefix web run build",
+    "build:server": "tsc -p tsconfig.json",
+    "build": "npm run build:web && npm run build:server",
+    "start:node": "node --no-warnings dist-server/adapters/node/index.js",
+    "deploy:cf": "npm run build:web && wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply owndrop-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply owndrop-db --remote",
+    "typecheck": "tsc -p tsconfig.json --noEmit && npm --prefix web run typecheck",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.1",
+    "aws4fetch": "^1.0.20",
+    "hono": "^4.7.10",
+    "jose": "^6.0.11"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.0.0",
+    "@types/node": "^22.15.21",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4",
+    "wrangler": "^4.16.1"
+  }
+}

@@ -1,0 +1,30 @@
+services:
+  owndrop:
+    build: .
+    container_name: owndrop
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${PORT:-4180}:4180"
+    environment:
+      PORT: 4180
+      OWNDROP_ORIGIN: ${OWNDROP_ORIGIN:-http://localhost:4180}
+      OWNDROP_PASSWORD: ${OWNDROP_PASSWORD:?Set OWNDROP_PASSWORD}
+      OWNDROP_SESSION_SECRET: ${OWNDROP_SESSION_SECRET:?Set OWNDROP_SESSION_SECRET}
+      OWNDROP_API_TOKEN: ${OWNDROP_API_TOKEN:-}
+      OWNDROP_OIDC_ISSUER: ${OWNDROP_OIDC_ISSUER:-}
+      OWNDROP_OIDC_CLIENT_ID: ${OWNDROP_OIDC_CLIENT_ID:-}
+      OWNDROP_OIDC_CLIENT_SECRET: ${OWNDROP_OIDC_CLIENT_SECRET:-}
+      OWNDROP_OIDC_REQUIRED_GROUP: ${OWNDROP_OIDC_REQUIRED_GROUP:-}
+      OWNDROP_SESSION_DAYS: ${OWNDROP_SESSION_DAYS:-180}
+      OWNDROP_RETENTION_DAYS: ${OWNDROP_RETENTION_DAYS:-90}
+      OWNDROP_MAX_FILE_MB: ${OWNDROP_MAX_FILE_MB:-90}
+      OWNDROP_MAX_STORAGE_MB: ${OWNDROP_MAX_STORAGE_MB:-4096}
+    volumes:
+      - owndrop_data:/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  owndrop_data:

@@ -1,0 +1,11 @@
+node_modules/
+web/node_modules/
+raycast/
+dist-server/
+web/dist/
+.wrangler/
+.data/
+.git/
+.env
+.dev.vars
+*.sqlite*

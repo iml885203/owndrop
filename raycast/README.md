@@ -1,6 +1,6 @@
 # OwnDrop for Raycast (macOS & Windows)
 
-Send and receive text, links, screenshots, and files across your devices using your own [OwnDrop](https://github.com/your-org/owndrop) instance — without ever opening a browser tab.
+Send and receive text, links, screenshots, and files across your devices using your own [OwnDrop](https://github.com/iml885203/owndrop) instance — without ever opening a browser tab.
 
 ## Setup
 

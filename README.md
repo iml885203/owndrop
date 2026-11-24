@@ -32,7 +32,7 @@ Send text, URLs, screenshots, and files seamlessly across **macOS**, **Windows**
 See the full walkthrough in [`docs/cloudflare-deploy.md`](docs/cloudflare-deploy.md).
 
 ```bash
-git clone https://github.com/your-org/owndrop.git
+git clone https://github.com/iml885203/owndrop.git
 cd owndrop
 npm install && npm --prefix web install
 

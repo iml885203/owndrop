@@ -150,36 +150,9 @@ docker compose up -d --build
 
 核心 API 採用 **Hono + TypeScript**，透過兩層極薄的儲存介面同時相容 **Cloudflare Native** 與 **Docker Self-Host**：
 
-```mermaid
-flowchart LR
-  subgraph Clients["零開網頁客戶端"]
-    RC["Raycast<br/>(macOS & Windows)"]
-    IOS["Apple 捷徑<br/>(iPhone & iPad)"]
-    WEB["Web PWA / CLI"]
-  end
-
-  subgraph Core["OwnDrop 核心 (Hono + TypeScript)"]
-    API["REST API + 認證層<br/>(密碼 · 標準 OIDC PKCE · 多裝置 Token)"]
-  end
-
-  subgraph CF["Cloudflare Native ($0/月)"]
-    D1["D1 SQLite"]
-    R2["R2 物件儲存<br/>(直傳 + Presigned)"]
-    CRON["每日 Cron 自動清理"]
-  end
-
-  subgraph Docker["Docker 自架模式"]
-    SQL["Node 22 內建 sqlite"]
-    FS["本地 /data 磁碟卷"]
-  end
-
-  RC -->|Bearer Token| API
-  IOS -->|Bearer Token| API
-  WEB -->|Cookie / Bearer| API
-  API --> D1 & R2
-  API -.->|或切換自架| SQL & FS
-  CRON -.-> D1 & R2
-```
+<p align="center">
+  <img src="docs/assets/architecture-zh-TW.svg" alt="OwnDrop 雙環境統一架構圖" width="100%" />
+</p>
 
 ---
 

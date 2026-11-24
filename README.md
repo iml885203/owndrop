@@ -150,36 +150,9 @@ OwnDrop starts on `http://127.0.0.1:4180`. Put Caddy, Nginx, Traefik, or Cloudfl
 
 One Hono TypeScript core powers both **Cloudflare Native** and **Docker Self-Host** through two thin storage adapters (~80 lines each):
 
-```mermaid
-flowchart LR
-  subgraph Clients["Zero-Browser Clients"]
-    RC["Raycast<br/>(macOS & Windows)"]
-    IOS["Apple Shortcuts<br/>(iPhone & iPad)"]
-    WEB["Web PWA / CLI"]
-  end
-
-  subgraph Core["OwnDrop Core (Hono + TypeScript)"]
-    API["REST API + Auth<br/>(Password · OIDC PKCE · Device Tokens)"]
-  end
-
-  subgraph CF["Cloudflare Native ($0/mo)"]
-    D1["D1 SQLite"]
-    R2["R2 Storage<br/>(Direct + Presigned)"]
-    CRON["Daily Cron Cleanup"]
-  end
-
-  subgraph Docker["Docker Self-Host"]
-    SQL["Node 22 node:sqlite"]
-    FS["Local /data Volume"]
-  end
-
-  RC -->|Bearer Token| API
-  IOS -->|Bearer Token| API
-  WEB -->|Cookie / Bearer| API
-  API --> D1 & R2
-  API -.->|or self-host| SQL & FS
-  CRON -.-> D1 & R2
-```
+<p align="center">
+  <img src="docs/assets/architecture.svg" alt="OwnDrop Unified Dual-Runtime Architecture" width="100%" />
+</p>
 
 ---
 

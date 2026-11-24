@@ -74,6 +74,9 @@ export function ItemCard({
                       alt=""
                       loading="lazy"
                       referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
                       className="hidden h-24 w-32 shrink-0 object-cover sm:block"
                     />
                   )}
@@ -84,6 +87,9 @@ export function ItemCard({
                           src={item.linkPreview.favicon}
                           alt=""
                           referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
                           className="size-3.5 rounded-xs"
                         />
                       )}

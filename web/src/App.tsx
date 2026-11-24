@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CloudUpload, KeyRound, LogIn, LogOut, RefreshCw, Search } from "lucide-react";
+import { CloudUpload, KeyRound, LogIn, LogOut, Moon, RefreshCw, Search, Sun } from "lucide-react";
 import { api } from "./api";
 import { Composer } from "./components/Composer";
 import { DevicesPanel } from "./components/DevicesPanel";
@@ -27,6 +27,16 @@ export function App() {
   const [previewItem, setPreviewItem] = useState<DropItem | null>(null);
   const [devicesOpen, setDevicesOpen] = useState(() => new URLSearchParams(window.location.search).get("tab") === "devices");
   const [toast, setToast] = useState("");
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    const saved = localStorage.getItem("owndrop-theme");
+    if (saved === "light" || saved === "dark") return saved;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("owndrop-theme", theme);
+  }, [theme]);
 
   const dragDepth = useRef(0);
   const toastTimer = useRef<number | undefined>(undefined);
@@ -342,18 +352,29 @@ export function App() {
             <span>OwnDrop</span>
           </a>
 
-          {session?.authenticated && (
-            <div className="flex items-center gap-1.5">
-              <button type="button" className="btn btn-outline" onClick={() => setDevicesOpen(true)}>
-                <KeyRound className="size-4 text-[var(--accent)]" />
-                <span>Devices</span>
-              </button>
-              <button type="button" className="btn btn-ghost" onClick={() => void handleLogout()}>
-                <LogOut className="size-4" />
-                <span className="hidden sm:inline">Sign out</span>
-              </button>
-            </div>
-          )}
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              className="btn btn-ghost !px-2.5"
+              onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              title={theme === "dark" ? "Light mode" : "Dark mode"}
+            >
+              {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            </button>
+            {session?.authenticated && (
+              <>
+                <button type="button" className="btn btn-outline" onClick={() => setDevicesOpen(true)}>
+                  <KeyRound className="size-4 text-[var(--accent)]" />
+                  <span>Devices</span>
+                </button>
+                <button type="button" className="btn btn-ghost" onClick={() => void handleLogout()}>
+                  <LogOut className="size-4" />
+                  <span className="hidden sm:inline">Sign out</span>
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </header>
 

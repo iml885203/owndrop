@@ -24,6 +24,8 @@ export interface SessionInfo {
   authenticated: boolean;
   oidcEnabled: boolean;
   passwordEnabled: boolean;
+  setupRequired?: boolean;
+  setupMessage?: string;
 }
 
 export interface MeInfo {

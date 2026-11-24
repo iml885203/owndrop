@@ -67,7 +67,33 @@ export default {
       return new Response("Frontend assets not bound", { status: 404 });
     }
 
-    const config = parseAppConfig(toStringEnv(env), url.origin);
+    if (url.pathname === "/api/health") {
+      return Response.json({ status: "ok", version: "1.0.0" }, { headers: { "Cache-Control": "no-store" } });
+    }
+
+    let config;
+    try {
+      config = parseAppConfig(toStringEnv(env), url.origin);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Configuration incomplete";
+      if (url.pathname === "/api/session") {
+        return Response.json(
+          {
+            authenticated: false,
+            oidcEnabled: false,
+            passwordEnabled: false,
+            setupRequired: true,
+            setupMessage: message,
+          },
+          { headers: { "Cache-Control": "no-store" } },
+        );
+      }
+      return Response.json(
+        { error: `OwnDrop setup incomplete: ${message}` },
+        { status: 503, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
     const db = new D1DbAdapter(env.DB);
     const blobs = new R2BlobStore(env.BUCKET, getPresignConfig(env));
     const { app } = createOwnDropApp({
@@ -81,7 +107,12 @@ export default {
   },
 
   async scheduled(_controller: ScheduledController, env: WorkerEnv, ctx: ExecutionContext): Promise<void> {
-    const config = parseAppConfig(toStringEnv(env), env.OWNDROP_ORIGIN ?? "https://owndrop.invalid");
+    let config;
+    try {
+      config = parseAppConfig(toStringEnv(env), env.OWNDROP_ORIGIN ?? "https://owndrop.invalid");
+    } catch {
+      return;
+    }
     const db = new D1DbAdapter(env.DB);
     const blobs = new R2BlobStore(env.BUCKET, getPresignConfig(env));
     const { repo } = createOwnDropApp({

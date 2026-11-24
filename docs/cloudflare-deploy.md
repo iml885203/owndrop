@@ -2,6 +2,19 @@
 
 OwnDrop is designed Cloudflare-Native first using **Workers + Static Assets + D1 + R2 + Cron Triggers**.
 
+## One-Click Deploy (Recommended)
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/iml885203/owndrop)
+
+1. Click **Deploy to Cloudflare** above — Cloudflare automatically forks the repo, provisions your free **D1 database** (`owndrop-db`) and **R2 bucket** (`owndrop-files`), runs `npm run build` + `npm run deploy` (which applies D1 migrations), and publishes your Worker.
+2. Open **Cloudflare Dashboard → Workers & Pages → owndrop → Settings → Variables and Secrets** and add:
+   - `OWNDROP_PASSWORD` — strong login password
+   - `OWNDROP_SESSION_SECRET` — random 32+ char secret (`openssl rand -base64 48`)
+   - *(Optional)* `OWNDROP_ORIGIN` — only needed if you attach a custom domain (otherwise defaults automatically to your `*.workers.dev` URL).
+3. Open your live Worker URL and sign in!
+
+---
+
 ## Free Tier Headroom (Personal Use)
 
 | Resource | Cloudflare Free Allowance | OwnDrop Safeguard |

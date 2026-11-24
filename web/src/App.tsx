@@ -369,6 +369,30 @@ export function App() {
           </div>
         ) : !session ? (
           <div className="mx-auto mt-20 max-w-sm text-center text-sm text-[var(--muted)]">Loading OwnDrop…</div>
+        ) : session.setupRequired ? (
+          <section className="card mx-auto mt-12 max-w-lg p-7">
+            <h1 className="m-0 text-2xl font-bold tracking-tight">Finish your OwnDrop setup</h1>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+              Your Cloudflare Worker is live! Add these two secrets in{" "}
+              <strong>Cloudflare Dashboard → Workers &amp; Pages → owndrop → Settings → Variables and Secrets</strong>, then reload this page:
+            </p>
+            <ul className="mt-4 space-y-2 rounded-xl bg-[var(--subtle)] p-4 text-xs leading-relaxed">
+              <li>
+                <code>OWNDROP_PASSWORD</code> — Your login password (or configure <code>OWNDROP_OIDC_*</code>)
+              </li>
+              <li>
+                <code>OWNDROP_SESSION_SECRET</code> — Any random string of at least 32 characters (e.g.{" "}
+                <code>openssl rand -base64 48</code>)
+              </li>
+            </ul>
+            {session.setupMessage && (
+              <p className="mt-3 text-xs text-[var(--muted)]">Details: {session.setupMessage}</p>
+            )}
+            <button type="button" className="btn btn-primary mt-5 w-full" onClick={() => void boot()}>
+              <RefreshCw className="size-4" />
+              <span>I&apos;ve added the secrets — Check again</span>
+            </button>
+          </section>
         ) : !session.authenticated ? (
           <section className="card mx-auto mt-12 max-w-md p-7">
             <h1 className="m-0 text-2xl font-bold tracking-tight">Your private cross-device drop</h1>

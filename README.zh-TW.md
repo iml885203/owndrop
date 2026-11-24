@@ -11,6 +11,13 @@
 [![Raycast](https://img.shields.io/badge/Raycast-macOS_%26_Windows-ff6363?style=flat-square&logo=raycast&logoColor=white)](raycast/README.md)
 [![iOS Shortcuts](https://img.shields.io/badge/iPhone-Apple_捷徑-6366f1?style=flat-square&logo=apple&logoColor=white)](docs/shortcuts.md)
 
+<br />
+<br />
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/iml885203/owndrop)
+
+<br />
+
 [English](README.md) · **繁體中文**
 
 [為什麼做 OwnDrop](#-為什麼做-owndrop) · [介面預覽](#-介面與裝置設定預覽) · [免費部署到 Cloudflare](#-方案一免費部署到-cloudflare0月推薦) · [Docker 自架](#-方案二docker-compose-自架) · [零開網頁接線](#-連接你的裝置日常再也不用開網頁)
@@ -72,31 +79,37 @@
 
 ## 🚀 3 分鐘快速部署（二選一）
 
-### ☁️ 方案一：免費部署到 Cloudflare（$0/月，推薦）
+### ☁️ 方案一：一鍵免費部署到 Cloudflare（$0/月，推薦）
 
-不需要租主機、不用開電腦跑 Docker，完整圖文步驟見 **[`docs/cloudflare-deploy.md`](docs/cloudflare-deploy.md)**。
+點擊下方按鈕，Cloudflare 會自動 Fork 專案、自動建立免費的 **D1 資料庫** 與 **R2 儲存空間**、自動執行資料表遷移並部署上線（全程約 2 分鐘，完全不用開電腦跑 Docker）：
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/iml885203/owndrop)
+
+部署完成後，到 **Cloudflare Dashboard → Workers & Pages → owndrop → Settings → Variables and Secrets** 加上這兩個 Secret 就立刻可用：
+- `OWNDROP_PASSWORD`：你的登入密碼
+- `OWNDROP_SESSION_SECRET`：任意 32 字元以上隨機字串（可用 `openssl rand -base64 48` 產生）
+
+<details>
+<summary>想改用本機 Wrangler CLI 部署？點此展開</summary>
 
 ```bash
 git clone https://github.com/iml885203/owndrop.git
 cd owndrop
-npm install && npm --prefix web install
+npm install
 
-# 1. 建立 D1 資料庫與 R2 儲存空間
-npx wrangler d1 create owndrop-db
-npx wrangler r2 bucket create owndrop-files
-# -> 把終端機印出的 database_id 貼進 wrangler.toml
-
-# 2. 套用資料庫結構到 D1
-npm run db:migrate:remote
-
-# 3. 設定環境密鑰
-npx wrangler secret put OWNDROP_ORIGIN          # 例如 https://drop.yourdomain.com
-npx wrangler secret put OWNDROP_PASSWORD        # 登入密碼
-npx wrangler secret put OWNDROP_SESSION_SECRET  # 可用 openssl rand -base64 48 產生
-
-# 4. 建置前端並一鍵上線！
+# 1. 建置前端並部署（會自動建立 D1 / R2 並執行遷移）
 npm run deploy:cf
+
+# 2. 設定密鑰
+npx wrangler secret put OWNDROP_PASSWORD
+npx wrangler secret put OWNDROP_SESSION_SECRET
+# 選填：綁定自訂網域時再設定（未設時自動使用 *.workers.dev）
+# npx wrangler secret put OWNDROP_ORIGIN
 ```
+
+</details>
+
+完整設定說明（含自訂網域、Pocket ID OIDC 與 >90 MB 大檔直傳）：**[`docs/cloudflare-deploy.md`](docs/cloudflare-deploy.md)**。
 
 > **免費額度安全防護**：預設總檔案上限設為 8 GB（`OWNDROP_MAX_STORAGE_MB=8192`），並透過每日 Cron 自動淘汰過期與最舊檔案，安心待在 R2 10 GB 免費額度內。
 

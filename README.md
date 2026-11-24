@@ -11,6 +11,13 @@
 [![Raycast](https://img.shields.io/badge/Raycast-macOS_%26_Windows-ff6363?style=flat-square&logo=raycast&logoColor=white)](raycast/README.md)
 [![iOS Shortcuts](https://img.shields.io/badge/iPhone-Apple_Shortcuts-6366f1?style=flat-square&logo=apple&logoColor=white)](docs/shortcuts.md)
 
+<br />
+<br />
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/iml885203/owndrop)
+
+<br />
+
 **English** · [繁體中文](README.zh-TW.md)
 
 [Why OwnDrop](#-why-owndrop) · [Screenshots](#-interface--device-setup) · [Deploy Free on Cloudflare](#-option-1-deploy-free-on-cloudflare-0month) · [Docker Self-Host](#-option-2-self-host-with-docker) · [Connect Devices](#-connect-your-devices-zero-browser-workflow)
@@ -74,29 +81,35 @@ Click **Devices** to mint revocable per-device tokens and copy ready-to-paste se
 
 ### ☁️ Option 1: Deploy Free on Cloudflare ($0/month)
 
-No VPS, no Docker, no Tunnel needed. Full step-by-step guide: **[`docs/cloudflare-deploy.md`](docs/cloudflare-deploy.md)**.
+Click the button below to fork OwnDrop, auto-provision your free **D1 database** and **R2 bucket**, run migrations, and go live in ~2 minutes — no VPS, no Docker, no Tunnel needed:
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/iml885203/owndrop)
+
+After clicking **Deploy**, add two secrets in **Cloudflare Dashboard → Workers & Pages → owndrop → Settings → Variables and Secrets**:
+- `OWNDROP_PASSWORD` — your login password
+- `OWNDROP_SESSION_SECRET` — any random 32+ char string (`openssl rand -base64 48`)
+
+<details>
+<summary>Prefer deploying from CLI with Wrangler?</summary>
 
 ```bash
 git clone https://github.com/iml885203/owndrop.git
 cd owndrop
-npm install && npm --prefix web install
+npm install
 
-# 1. Create your D1 database & R2 bucket
-npx wrangler d1 create owndrop-db
-npx wrangler r2 bucket create owndrop-files
-# -> Paste the printed database_id into wrangler.toml
-
-# 2. Apply SQLite schema to D1
-npm run db:migrate:remote
-
-# 3. Set your secrets
-npx wrangler secret put OWNDROP_ORIGIN          # e.g. https://drop.yourdomain.com
-npx wrangler secret put OWNDROP_PASSWORD        # strong login password
-npx wrangler secret put OWNDROP_SESSION_SECRET  # openssl rand -base64 48
-
-# 4. Build & deploy!
+# 1. Build frontend & deploy (auto-provisions D1 + R2 and applies migrations)
 npm run deploy:cf
+
+# 2. Set your secrets
+npx wrangler secret put OWNDROP_PASSWORD
+npx wrangler secret put OWNDROP_SESSION_SECRET
+# Optional: lock to a custom domain (defaults to your *.workers.dev origin)
+# npx wrangler secret put OWNDROP_ORIGIN
 ```
+
+</details>
+
+Full walkthrough (including custom domains, Pocket ID OIDC, and >90 MB R2 direct uploads): **[`docs/cloudflare-deploy.md`](docs/cloudflare-deploy.md)**.
 
 > **Free-tier safety net**: OwnDrop defaults to an 8 GB storage cap (`OWNDROP_MAX_STORAGE_MB=8192`) and runs a daily Cron job to evict old files automatically, keeping you comfortably inside Cloudflare R2's 10 GB free allowance.
 

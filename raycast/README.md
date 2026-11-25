@@ -3,7 +3,7 @@
 ## Setup
 
 1. Open OwnDrop, choose **Devices**, and create a token for this computer.
-2. Set **Server URL** and **Device API Token** in extension preferences.
+2. Click **Copy Connection Details** and paste it into **Connection Details or Device API Token** in extension preferences. For manual setup, paste the token there and set **Server URL (Manual Setup)** separately.
 3. Optionally assign hotkeys to **Drop** and **Browse**.
 
 ## Commands

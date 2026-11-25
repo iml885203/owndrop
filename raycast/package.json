@@ -17,16 +17,16 @@
   "preferences": [
     {
       "name": "serverUrl",
-      "title": "Server URL",
+      "title": "Server URL (Manual Setup)",
       "description": "Your OwnDrop instance URL (e.g., https://drop.example.com)",
       "type": "textfield",
       "placeholder": "https://drop.example.com",
-      "required": true
+      "required": false
     },
     {
       "name": "apiToken",
-      "title": "Device API Token",
-      "description": "Create a revocable device token in OwnDrop \u2192 Devices",
+      "title": "Connection Details or Device API Token",
+      "description": "Paste Copy Connection Details from OwnDrop Devices, or enter a token with the manual Server URL",
       "type": "password",
       "placeholder": "owd_...",
       "required": true

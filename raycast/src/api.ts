@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { environment, getPreferenceValues } from "@raycast/api";
 
 export interface ExtensionPreferences {
-  serverUrl: string;
+  serverUrl?: string;
   apiToken: string;
 }
 
@@ -42,18 +42,28 @@ export interface MeInfo {
 
 function getConfig(): { baseUrl: string; token: string } {
   const prefs = getPreferenceValues<ExtensionPreferences>();
-  const baseUrl = prefs.serverUrl.trim().replace(/\/+$/, "");
-  const token = prefs.apiToken.trim();
+  let serverUrl = prefs.serverUrl?.trim() ?? "";
+  let token = prefs.apiToken.trim();
+  if (token.startsWith("owndrop-setup:")) {
+    const setup = /^owndrop-setup:v1 (\S+) (owd_[A-Za-z0-9_-]{43})$/.exec(token);
+    if (!setup) throw new Error("Invalid OwnDrop connection details. Copy it again from OwnDrop Devices.");
+    [, serverUrl, token] = setup;
+  }
+  const url = URL.canParse(serverUrl) ? new URL(serverUrl) : undefined;
   if (
-    !baseUrl.startsWith("https://") &&
-    !baseUrl.startsWith("http://localhost") &&
-    !baseUrl.startsWith("http://127.0.0.1")
+    !url ||
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash ||
+    (url.protocol !== "https:" && !(url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname)))
   ) {
-    throw new Error("Server URL must start with https:// (or http://localhost for local dev).");
+    throw new Error("Enter a valid HTTPS Server URL in extension preferences (HTTP is allowed for local dev).");
   }
   if (!token) {
-    throw new Error("Device API Token is required in extension preferences.");
+    throw new Error("Paste connection details or a Device API Token in extension preferences.");
   }
+  const baseUrl = url.href.replace(/\/+$/, "");
   return { baseUrl, token };
 }
 
@@ -97,7 +107,14 @@ export async function getLatestDrop(): Promise<DropItem> {
   return apiFetch<DropItem>("/api/items/latest");
 }
 
+export function containsSetupCredential(text: string): boolean {
+  return text.includes("owndrop-setup:") || /\bowd_[A-Za-z0-9_-]{43}\b/.test(text);
+}
+
 export async function dropText(text: string): Promise<DropItem> {
+  if (containsSetupCredential(text)) {
+    throw new Error("OwnDrop setup credentials cannot be dropped. Paste them into extension preferences.");
+  }
   return apiFetch<DropItem>("/api/items/text", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Action, ActionPanel, Clipboard, Form, showToast, Toast } from "@raycast/api";
-import { dropFileFromPath, dropText, type DropItem } from "./api";
+import { containsSetupCredential, dropFileFromPath, dropText, type DropItem } from "./api";
 import BrowseDropsCommand from "./browse-drops";
 
 export default function DropCommand() {
@@ -48,6 +48,11 @@ export default function DropCommand() {
     started.current = true;
     void Clipboard.read()
       .then((content) => {
+        if (content.text && containsSetupCredential(content.text)) {
+          setMessage("Clipboard contains OwnDrop credentials. Paste them into extension preferences.");
+          setLoading(false);
+          return;
+        }
         const clipboardFiles = content.file ? [content.file] : [];
         setFiles(clipboardFiles);
         setText(content.text ?? "");

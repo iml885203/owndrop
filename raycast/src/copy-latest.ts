@@ -1,5 +1,5 @@
 import { Clipboard, showHUD, showToast, Toast } from "@raycast/api";
-import { downloadDropToDownloads, getLatestDrop } from "./api";
+import { downloadDropForClipboard, getLatestDrop } from "./api";
 
 export default async function CopyLatestCommand() {
   try {
@@ -15,11 +15,11 @@ export default async function CopyLatestCommand() {
 
     await showToast({
       style: Toast.Style.Animated,
-      title: `Downloading ${latest.name || "latest file"}…`,
+      title: `Copying ${latest.name || "latest file"}…`,
     });
-    const savedPath = await downloadDropToDownloads(latest);
+    const savedPath = await downloadDropForClipboard(latest);
     await Clipboard.copy({ file: savedPath });
-    await showHUD(`Downloaded & copied ${latest.name || "file"}`);
+    await showHUD(`Copied ${latest.name || "file"}`);
   } catch (err) {
     await showToast({
       style: Toast.Style.Failure,

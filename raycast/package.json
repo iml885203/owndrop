@@ -5,9 +5,15 @@
   "description": "Send and receive text, links, screenshots, and files across macOS, Windows, and iOS using your self-hosted or Cloudflare-hosted OwnDrop instance.",
   "icon": "extension-icon.png",
   "author": "Logan-8f",
-  "categories": ["Productivity", "Developer Tools"],
+  "categories": [
+    "Productivity",
+    "Developer Tools"
+  ],
   "license": "MIT",
-  "platforms": ["macOS", "Windows"],
+  "platforms": [
+    "macOS",
+    "Windows"
+  ],
   "preferences": [
     {
       "name": "serverUrl",
@@ -20,7 +26,7 @@
     {
       "name": "apiToken",
       "title": "Device API Token",
-      "description": "Create a revocable device token in OwnDrop → Devices",
+      "description": "Create a revocable device token in OwnDrop \u2192 Devices",
       "type": "password",
       "placeholder": "owd_...",
       "required": true
@@ -28,42 +34,16 @@
   ],
   "commands": [
     {
-      "name": "browse-drops",
-      "title": "Browse Drops",
-      "description": "Search, copy, download, pin, and manage items in your OwnDrop inbox",
-      "mode": "view"
-    },
-    {
       "name": "drop-clipboard",
-      "title": "Drop Clipboard",
-      "description": "Instantly send your current clipboard text, URL, or image to OwnDrop",
-      "mode": "no-view"
-    },
-    {
-      "name": "copy-latest",
-      "title": "Copy Latest Drop",
-      "description": "Copy the newest text or download the newest file from OwnDrop to your clipboard",
-      "mode": "no-view"
-    },
-    {
-      "name": "drop-files",
-      "title": "Drop Files",
-      "description": "Upload one or more files to your OwnDrop inbox",
+      "title": "Drop",
+      "description": "Automatically send clipboard text, links, or files, then browse your drops",
       "mode": "view"
     },
     {
-      "name": "drop-text",
-      "title": "Drop Text",
-      "description": "Type or paste a quick note or snippet into OwnDrop",
+      "name": "browse-drops",
+      "title": "Browse",
+      "description": "See your newest drops, copy, download, and manage them",
       "mode": "view"
-    },
-    {
-      "name": "menu-bar",
-      "title": "OwnDrop Menu Bar",
-      "description": "Quickly view and copy your latest drops from the menu bar",
-      "mode": "menu-bar",
-      "interval": "5m",
-      "platforms": ["macOS"]
     }
   ],
   "dependencies": {
@@ -81,6 +61,8 @@
   "scripts": {
     "build": "ray build -e dist",
     "dev": "ray develop",
+    "dev:windows": "ray develop --target release",
+    "build:windows": "ray build --target release -e dist",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
     "publish": "npx @raycast/api@latest publish"

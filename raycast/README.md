@@ -1,30 +1,36 @@
 # OwnDrop for Raycast (macOS & Windows)
 
-Send and receive text, links, screenshots, and files across your devices using your own [OwnDrop](https://github.com/iml885203/owndrop) instance — without ever opening a browser tab.
-
 ## Setup
 
-1. Open your OwnDrop web UI → click **Devices** → create a token for this machine (e.g., `MacBook Pro` or `Windows PC`).
-2. Open Raycast → **OwnDrop** extension preferences:
-   - **Server URL**: Your OwnDrop URL (e.g., `https://drop.example.com`)
-   - **Device API Token**: The `owd_...` token generated in step 1.
-3. *(Recommended)* Assign global hotkeys to **Drop Clipboard** and **Copy Latest Drop**.
+1. Open OwnDrop, choose **Devices**, and create a token for this computer.
+2. Set **Server URL** and **Device API Token** in extension preferences.
+3. Optionally assign hotkeys to **Drop** and **Browse**.
 
 ## Commands
 
-| Command | Platforms | Description |
-| :--- | :--- | :--- |
-| **Browse Drops** | macOS, Windows | Search recent drops, copy text, paste directly, open URLs, download files, pin, or delete. |
-| **Drop Clipboard** | macOS, Windows | Background command that immediately uploads your clipboard text, link, or image. |
-| **Copy Latest Drop** | macOS, Windows | Background command that copies the newest text (or downloads & copies the newest file). |
-| **Drop Files** | macOS, Windows | Upload one or more files (auto-prefills selected Finder items on macOS). |
-| **Drop Text** | macOS, Windows | Quick form to type or paste a snippet. |
-| **OwnDrop Menu Bar** | macOS | Menu bar popover showing your latest drops for 1-click copy. |
+- **Drop** automatically sends clipboard text, URLs, or a file. On success, Browse opens with the uploaded item selected and marked **Just dropped**. If the clipboard is empty or unsupported, enter text or choose files in the form. Selected files take priority over text. Clipboard images work when Raycast exposes them as a file; otherwise save the image and choose it in the form.
+- **Browse** immediately shows locally cached drops and refreshes in the background on launch and every 10 seconds while open. Pinned items come first, then newest first within each group, matching the web app.
 
-## Local Development
+In Browse:
+
+- Press Enter to **Open Link** for URLs, or **Copy** for text and files. Copy remains available in Actions for links.
+- Select an image to see a cached preview in the detail pane. Only the selected image is fetched; images above 20 MB can still be copied or downloaded without a preview.
+- File copies use a temporary folder, keeping Downloads clear. The local file must remain available for paste and is not deleted when the clipboard changes. Choose **Download to Downloads** to save a separate copy there.
+- Search filters loaded content immediately, then queries the server after a 250 ms pause. Superseded requests are cancelled. Search covers text, filenames, and devices.
+- Results are cached separately for each query and server/device token. Drops, pins, and deletions update the current cache immediately; failed pin/delete requests roll back. Failed refreshes keep cached results visible and labeled.
+
+## Development
 
 ```bash
 cd raycast
 npm install
 npm run dev
 ```
+
+For Windows Raycast versions that read from `~/.config/raycast` rather than the newer SDK default `~/.config/raycast-x`:
+
+```bash
+npm run dev:windows
+```
+
+`npm run build:windows` builds into the same directory and checks TypeScript.

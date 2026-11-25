@@ -1,6 +1,6 @@
 import { Clipboard, Icon, MenuBarExtra, open, showHUD } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
-import { downloadDropToDownloads, type DropItem, getServerUrl, listDrops } from "./api";
+import { downloadDropForClipboard, type DropItem, getServerUrl, listDrops } from "./api";
 
 function labelFor(item: DropItem): string {
   const raw = item.type === "text" ? item.linkPreview?.title || item.text || "Text" : item.name || "File";
@@ -17,9 +17,9 @@ export default function MenuBarCommand() {
       await showHUD("Copied drop to clipboard");
       return;
     }
-    const dest = await downloadDropToDownloads(item);
+    const dest = await downloadDropForClipboard(item);
     await Clipboard.copy({ file: dest });
-    await showHUD(`Downloaded & copied ${item.name || "file"}`);
+    await showHUD(`Copied ${item.name || "file"}`);
   };
 
   return (

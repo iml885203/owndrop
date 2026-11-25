@@ -1,8 +1,9 @@
 import fs from "node:fs/promises";
+import { createHash } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { getPreferenceValues } from "@raycast/api";
+import { environment, getPreferenceValues } from "@raycast/api";
 
 export interface ExtensionPreferences {
   serverUrl: string;
@@ -59,6 +60,13 @@ export function getServerUrl(): string {
   return getConfig().baseUrl;
 }
 
+export function getCacheScope(): string {
+  const { baseUrl, token } = getConfig();
+  return createHash("sha256")
+    .update(JSON.stringify([baseUrl, token]))
+    .digest("hex");
+}
+
 async function apiFetch<T>(apiPath: string, init: RequestInit = {}): Promise<T> {
   const { baseUrl, token } = getConfig();
   const headers = new Headers(init.headers);
@@ -78,10 +86,10 @@ export async function getMe(): Promise<MeInfo> {
   return apiFetch<MeInfo>("/api/me");
 }
 
-export async function listDrops(query = "", limit = 50): Promise<DropItem[]> {
+export async function listDrops(query = "", limit = 50, signal?: AbortSignal): Promise<DropItem[]> {
   const params = new URLSearchParams({ limit: String(limit) });
   if (query.trim()) params.set("q", query.trim());
-  return apiFetch<DropItem[]>(`/api/items?${params.toString()}`);
+  return apiFetch<DropItem[]>(`/api/items?${params.toString()}`, { headers: { "Cache-Control": "no-cache" }, signal });
 }
 
 export async function getLatestDrop(): Promise<DropItem> {
@@ -190,6 +198,45 @@ export async function deleteDrop(id: string): Promise<void> {
 }
 
 export async function downloadDropToDownloads(item: DropItem): Promise<string> {
+  return downloadDrop(item, false);
+}
+
+export async function downloadDropForClipboard(item: DropItem): Promise<string> {
+  return downloadDrop(item, true);
+}
+
+export async function getImagePreview(item: DropItem, signal?: AbortSignal): Promise<string> {
+  const { baseUrl, token } = getConfig();
+  const key = createHash("sha256")
+    .update(JSON.stringify([getCacheScope(), item.id]))
+    .digest("hex");
+  const extension =
+    { "image/png": ".png", "image/jpeg": ".jpg", "image/gif": ".gif", "image/webp": ".webp", "image/svg+xml": ".svg" }[
+      item.mime ?? ""
+    ] ?? ".img";
+  const directory = path.join(environment.supportPath, "image-previews");
+  const target = path.join(directory, `${key}${extension}`);
+  try {
+    await fs.access(target);
+    return target;
+  } catch {
+    // Download only the selected image, and reuse it on subsequent selections.
+  }
+  if (item.size > 20 * 1024 * 1024)
+    throw new Error("Preview supports images up to 20 MB. You can still copy or download this image.");
+  const response = await fetch(`${baseUrl}/api/files/${encodeURIComponent(item.id)}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    signal,
+  });
+  if (!response.ok) throw new Error(`Could not load image (HTTP ${response.status})`);
+  const bytes = Buffer.from(await response.arrayBuffer());
+  signal?.throwIfAborted();
+  await fs.mkdir(directory, { recursive: true });
+  await fs.writeFile(target, bytes);
+  return target;
+}
+
+async function downloadDrop(item: DropItem, clipboardOnly: boolean): Promise<string> {
   const { baseUrl, token } = getConfig();
   const res = await fetch(`${baseUrl}/api/files/${encodeURIComponent(item.id)}`, {
     headers: {
@@ -201,7 +248,10 @@ export async function downloadDropToDownloads(item: DropItem): Promise<string> {
     throw new Error(`Failed to download file (HTTP ${res.status})`);
   }
 
-  const downloadsDir = path.join(os.homedir(), "Downloads");
+  // File clipboard entries reference a local path. Keep it available for later paste.
+  const downloadsDir = clipboardOnly
+    ? await fs.mkdtemp(path.join(os.tmpdir(), "owndrop-clipboard-"))
+    : path.join(os.homedir(), "Downloads");
   await fs.mkdir(downloadsDir, { recursive: true });
 
   const safeName = (item.name || `owndrop-${item.id}`).replace(/[/\\:*?"<>|]/g, "_");

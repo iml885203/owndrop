@@ -37,7 +37,8 @@ export class OidcService {
       return this.cachedDiscovery.doc;
     }
     const base = this.oidc.issuer.replace(/\/+$/, "");
-    const res = await this.fetchImpl(`${base}/.well-known/openid-configuration`, {
+    const fetchFn = this.fetchImpl;
+    const res = await fetchFn(`${base}/.well-known/openid-configuration`, {
       headers: { Accept: "application/json" },
     });
     if (!res.ok) throw new Error(`OIDC discovery failed (${res.status})`);
@@ -53,7 +54,8 @@ export class OidcService {
     if (this.cachedJwks && Date.now() - this.cachedJwks.fetchedAt < 10 * 60 * 1000) {
       return this.cachedJwks.jwks;
     }
-    const res = await this.fetchImpl(jwksUri, { headers: { Accept: "application/json" } });
+    const fetchFn = this.fetchImpl;
+    const res = await fetchFn(jwksUri, { headers: { Accept: "application/json" } });
     if (!res.ok) throw new Error(`OIDC JWKS fetch failed (${res.status})`);
     const jwks = (await res.json()) as JSONWebKeySet;
     this.cachedJwks = { jwks, fetchedAt: Date.now() };
@@ -117,7 +119,8 @@ export class OidcService {
       code_verifier: tx.code_verifier,
     });
 
-    const tokenRes = await this.fetchImpl(doc.token_endpoint, {
+    const fetchFn = this.fetchImpl;
+    const tokenRes = await fetchFn(doc.token_endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

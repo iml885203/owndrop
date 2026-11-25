@@ -9,12 +9,12 @@ import { getDropKind } from "./content";
 
 const run = promisify(execFile);
 
-export async function copyDrop(item: DropItem, asFile = false): Promise<void> {
-  if (item.type === "text" && !asFile) {
+export async function copyDrop(item: DropItem): Promise<void> {
+  if (item.type === "text") {
     await Clipboard.copy(item.text ?? "");
     return;
   }
-  if (getDropKind(item) !== "image" || asFile) {
+  if (getDropKind(item) !== "image") {
     await Clipboard.copy({ file: await downloadDropForClipboard(item) });
     return;
   }
@@ -31,7 +31,7 @@ export async function copyDrop(item: DropItem, asFile = false): Promise<void> {
         { windowsHide: true, timeout: 20000, env: { ...process.env, OWNDROP_CLIPBOARD_IMAGE_PATH: localPath } },
       );
     } catch {
-      throw new Error("Could not copy image pixels. Try Copy File for this image format.");
+      throw new Error("Could not copy this image. Use Download to Downloads instead.");
     }
     return;
   }
@@ -51,5 +51,5 @@ export async function copyDrop(item: DropItem, asFile = false): Promise<void> {
     );
     return;
   }
-  throw new Error("Image clipboard is not supported on this platform. Use Copy File instead.");
+  throw new Error("Image clipboard is not supported on this platform. Use Download to Downloads instead.");
 }

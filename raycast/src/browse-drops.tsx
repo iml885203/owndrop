@@ -153,14 +153,14 @@ export default function BrowseDropsCommand({ uploaded }: { uploaded?: DropItem }
     }
   };
 
-  const handleDownload = async (item: DropItem, copyFileAfter: boolean, asFile = false) => {
+  const handleDownload = async (item: DropItem, copyFileAfter: boolean) => {
     const toast = await showToast({
       style: Toast.Style.Animated,
       title: `${copyFileAfter ? "Copying" : "Downloading"} ${item.name || "file"}…`,
     });
     try {
       if (copyFileAfter) {
-        await copyDrop(item, asFile);
+        await copyDrop(item);
         toast.hide();
         await showHUD(`Copied ${item.name || "file"}`);
       } else {
@@ -296,13 +296,6 @@ export default function BrowseDropsCommand({ uploaded }: { uploaded?: DropItem }
                         />
                       )}
                       <Action title="Copy" icon={Icon.Clipboard} onAction={() => handleDownload(item, true)} />
-                      {kind === "image" && (
-                        <Action
-                          title="Copy File"
-                          icon={Icon.Document}
-                          onAction={() => handleDownload(item, true, true)}
-                        />
-                      )}
                       {kind !== "video" && kind !== "audio" && (
                         <Action title="Open File" icon={Icon.Eye} onAction={() => handleOpenFile(item)} />
                       )}

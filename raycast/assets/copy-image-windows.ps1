@@ -18,7 +18,7 @@ try {
     # Persist both image formats after this helper exits; never add FileDrop.
     [System.Windows.Forms.Clipboard]::SetDataObject($data, $true, 10, 100)
 } catch {
-    [Console]::Error.WriteLine('Could not copy image pixels. The image format may not be supported by Windows. Use Copy File instead.')
+    [Console]::Error.WriteLine('Could not copy image pixels. The image format may not be supported by Windows. Use Download to Downloads instead.')
     exit 1
 } finally {
     if ($png) { $png.Dispose() }

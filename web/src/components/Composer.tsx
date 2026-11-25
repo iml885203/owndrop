@@ -50,9 +50,6 @@ export function Composer({
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <h1 className="m-0 text-xl font-semibold tracking-tight">Drop anything</h1>
-          <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
-            Send text, links, screenshots, or files across your devices.
-          </p>
         </div>
       </div>
 
@@ -98,7 +95,8 @@ export function Composer({
         className="field min-h-[112px] resize-y text-sm leading-relaxed"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Paste text or URL… (⌘/Ctrl + Enter to drop)"
+        aria-label="Text or link to drop"
+        placeholder="Paste text or a link…"
         maxLength={65536}
         onKeyDown={(e) => {
           if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -111,6 +109,8 @@ export function Composer({
       <button
         type="button"
         className="btn btn-primary mt-3 w-full"
+        aria-keyshortcuts="Meta+Enter Control+Enter"
+        title="⌘ or Ctrl + Enter"
         disabled={busy || !text.trim()}
         onClick={() => void submitText()}
       >
@@ -152,8 +152,7 @@ export function Composer({
       </div>
 
       <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">
-        Tip: Drag &amp; drop files anywhere on this page, or press <kbd className="rounded bg-[var(--subtle)] px-1 py-0.5 text-[11px]">⌘V</kbd> to upload clipboard images. Max{" "}
-        {directUploadEnabled ? `${maxPresignedFileMb} MB` : `${maxFileMb} MB`} per file.
+        Drag files or paste an image · {directUploadEnabled ? maxPresignedFileMb : maxFileMb} MB per file
       </p>
     </section>
   );

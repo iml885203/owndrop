@@ -147,17 +147,6 @@ export function ItemCard({
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-1">
-          <button
-            type="button"
-            className="btn btn-ghost !px-2.5"
-            disabled={pinning}
-            onClick={() => onPinToggle(item)}
-            title={item.pinned ? "Unpin" : "Pin to top"}
-            aria-label={item.pinned ? "Unpin" : "Pin to top"}
-          >
-            <Pin className={`size-4 ${item.pinned ? "text-[var(--accent)]" : ""}`} />
-          </button>
-
           {item.type === "text" && item.text && (
             <button
               type="button"
@@ -170,24 +159,14 @@ export function ItemCard({
           )}
 
           {item.type === "image" && (
-            <>
-              <button
-                type="button"
-                className="btn btn-ghost !px-2.5"
-                onClick={() => onCopyImage(item)}
-              >
-                <Copy className="size-4" />
-                <span className="hidden sm:inline">Copy</span>
-              </button>
-              <button
-                type="button"
-                className="btn btn-ghost !px-2.5"
-                onClick={() => onPreviewImage(item)}
-              >
-                <Share2 className="size-4" />
-                <span className="sm:hidden">Save</span>
-              </button>
-            </>
+            <button
+              type="button"
+              className="btn btn-ghost !px-2.5"
+              onClick={() => onCopyImage(item)}
+            >
+              <Copy className="size-4" />
+              <span className="hidden sm:inline">Copy</span>
+            </button>
           )}
 
           {item.type !== "text" && (
@@ -196,6 +175,30 @@ export function ItemCard({
               <span className="hidden sm:inline">Download</span>
             </a>
           )}
+
+          {item.type === "image" && (
+            <button
+              type="button"
+              className="btn btn-ghost !px-2.5"
+              onClick={() => onPreviewImage(item)}
+              title="Share / Preview"
+              aria-label="Share or preview image"
+            >
+              <Share2 className="size-4" />
+              <span className="sm:hidden">Save</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="btn btn-ghost !px-2.5"
+            disabled={pinning}
+            onClick={() => onPinToggle(item)}
+            title={item.pinned ? "Unpin" : "Pin to top"}
+            aria-label={item.pinned ? "Unpin" : "Pin to top"}
+          >
+            <Pin className={`size-4 ${item.pinned ? "text-[var(--accent)]" : ""}`} />
+          </button>
 
           <button
             type="button"

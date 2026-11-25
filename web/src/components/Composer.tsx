@@ -50,6 +50,7 @@ export function Composer({
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <h1 className="m-0 text-xl font-semibold tracking-tight">Drop anything</h1>
+          <p className="mt-1 text-xs text-[var(--muted)]">Send to your other devices.</p>
         </div>
       </div>
 

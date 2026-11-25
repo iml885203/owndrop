@@ -47,9 +47,7 @@ function getConfig(): { baseUrl: string; token: string } {
     !baseUrl.startsWith("http://localhost") &&
     !baseUrl.startsWith("http://127.0.0.1")
   ) {
-    throw new Error(
-      "Server URL must start with https:// (or http://localhost for local dev).",
-    );
+    throw new Error("Server URL must start with https:// (or http://localhost for local dev).");
   }
   if (!token) {
     throw new Error("Device API Token is required in extension preferences.");
@@ -61,10 +59,7 @@ export function getServerUrl(): string {
   return getConfig().baseUrl;
 }
 
-async function apiFetch<T>(
-  apiPath: string,
-  init: RequestInit = {},
-): Promise<T> {
+async function apiFetch<T>(apiPath: string, init: RequestInit = {}): Promise<T> {
   const { baseUrl, token } = getConfig();
   const headers = new Headers(init.headers);
   headers.set("Authorization", `Bearer ${token}`);
@@ -180,10 +175,7 @@ export async function dropFileFromPath(rawPath: string): Promise<DropItem> {
   });
 }
 
-export async function setDropPinned(
-  id: string,
-  pinned: boolean,
-): Promise<void> {
+export async function setDropPinned(id: string, pinned: boolean): Promise<void> {
   await apiFetch<void>(`/api/items/${encodeURIComponent(id)}/pin`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -199,15 +191,12 @@ export async function deleteDrop(id: string): Promise<void> {
 
 export async function downloadDropToDownloads(item: DropItem): Promise<string> {
   const { baseUrl, token } = getConfig();
-  const res = await fetch(
-    `${baseUrl}/api/files/${encodeURIComponent(item.id)}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "User-Agent": "OwnDrop-Raycast/1.0",
-      },
+  const res = await fetch(`${baseUrl}/api/files/${encodeURIComponent(item.id)}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "User-Agent": "OwnDrop-Raycast/1.0",
     },
-  );
+  });
   if (!res.ok) {
     throw new Error(`Failed to download file (HTTP ${res.status})`);
   }
@@ -215,10 +204,7 @@ export async function downloadDropToDownloads(item: DropItem): Promise<string> {
   const downloadsDir = path.join(os.homedir(), "Downloads");
   await fs.mkdir(downloadsDir, { recursive: true });
 
-  const safeName = (item.name || `owndrop-${item.id}`).replace(
-    /[/\\:*?"<>|]/g,
-    "_",
-  );
+  const safeName = (item.name || `owndrop-${item.id}`).replace(/[/\\:*?"<>|]/g, "_");
   const parsed = path.parse(safeName);
   let target = path.join(downloadsDir, safeName);
   for (let i = 1; i < 100; i++) {
@@ -240,9 +226,7 @@ export function extractUrl(text?: string): string | null {
   if (!trimmed || /\s/.test(trimmed)) return null;
   try {
     const parsed = new URL(trimmed);
-    return parsed.protocol === "http:" || parsed.protocol === "https:"
-      ? parsed.href
-      : null;
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.href : null;
   } catch {
     return null;
   }

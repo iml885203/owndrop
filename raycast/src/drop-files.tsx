@@ -1,14 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Action,
-  ActionPanel,
-  Form,
-  getSelectedFinderItems,
-  popToRoot,
-  showHUD,
-  showToast,
-  Toast,
-} from "@raycast/api";
+import { Action, ActionPanel, Form, getSelectedFinderItems, popToRoot, showHUD, showToast, Toast } from "@raycast/api";
 import { dropFileFromPath } from "./api";
 
 export default function DropFilesCommand() {
@@ -47,9 +38,7 @@ export default function DropFilesCommand() {
         await dropFileFromPath(values.files[i]!);
       }
       toast.hide();
-      await showHUD(
-        `Dropped ${values.files.length} file${values.files.length > 1 ? "s" : ""} to OwnDrop`,
-      );
+      await showHUD(`Dropped ${values.files.length} file${values.files.length > 1 ? "s" : ""} to OwnDrop`);
       await popToRoot();
     } catch (err) {
       toast.style = Toast.Style.Failure;

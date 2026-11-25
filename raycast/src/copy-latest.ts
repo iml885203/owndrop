@@ -8,8 +8,7 @@ export default async function CopyLatestCommand() {
     if (latest.type === "text" && latest.text) {
       await Clipboard.copy(latest.text);
       const from = latest.device ? ` (${latest.device})` : "";
-      const snippet =
-        latest.text.length > 40 ? `${latest.text.slice(0, 40)}…` : latest.text;
+      const snippet = latest.text.length > 40 ? `${latest.text.slice(0, 40)}…` : latest.text;
       await showHUD(`Copied${from}: ${snippet}`);
       return;
     }

@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  Action,
-  ActionPanel,
-  Form,
-  popToRoot,
-  showHUD,
-  showToast,
-  Toast,
-} from "@raycast/api";
+import { Action, ActionPanel, Form, popToRoot, showHUD, showToast, Toast } from "@raycast/api";
 import { dropText } from "./api";
 
 export default function DropTextCommand() {

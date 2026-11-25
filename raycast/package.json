@@ -4,8 +4,8 @@
   "title": "OwnDrop",
   "description": "Send and receive text, links, screenshots, and files across macOS, Windows, and iOS using your self-hosted or Cloudflare-hosted OwnDrop instance.",
   "icon": "extension-icon.png",
-  "author": "owndrop",
-  "categories": ["Productivity", "Tools"],
+  "author": "Logan-8f",
+  "categories": ["Productivity", "Developer Tools"],
   "license": "MIT",
   "platforms": ["macOS", "Windows"],
   "preferences": [

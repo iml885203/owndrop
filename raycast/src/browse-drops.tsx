@@ -56,11 +56,7 @@ export default function BrowseDropsCommand() {
     isLoading,
     error,
     revalidate,
-  } = useCachedPromise(
-    async (query: string) => listDrops(query, 60),
-    [searchText],
-    { keepPreviousData: true },
-  );
+  } = useCachedPromise(async (query: string) => listDrops(query, 60), [searchText], { keepPreviousData: true });
 
   const handleDownload = async (item: DropItem, copyFileAfter: boolean) => {
     const toast = await showToast({
@@ -137,16 +133,8 @@ export default function BrowseDropsCommand() {
           description={error.message}
           actions={
             <ActionPanel>
-              <Action
-                title="Open Extension Preferences"
-                icon={Icon.Gear}
-                onAction={openExtensionPreferences}
-              />
-              <Action
-                title="Retry"
-                icon={Icon.ArrowClockwise}
-                onAction={revalidate}
-              />
+              <Action title="Open Extension Preferences" icon={Icon.Gear} onAction={openExtensionPreferences} />
+              <Action title="Retry" icon={Icon.ArrowClockwise} onAction={revalidate} />
             </ActionPanel>
           }
         />
@@ -175,20 +163,9 @@ export default function BrowseDropsCommand() {
                 <ActionPanel>
                   {item.type === "text" && item.text ? (
                     <>
-                      <Action.CopyToClipboard
-                        title="Copy Text"
-                        content={item.text}
-                      />
-                      <Action.Paste
-                        title="Paste to Active App"
-                        content={item.text}
-                      />
-                      {url && (
-                        <Action.OpenInBrowser
-                          title="Open URL in Browser"
-                          url={url}
-                        />
-                      )}
+                      <Action.CopyToClipboard title="Copy Text" content={item.text} />
+                      <Action.Paste title="Paste to Active App" content={item.text} />
+                      {url && <Action.OpenInBrowser title="Open URL in Browser" url={url} />}
                     </>
                   ) : (
                     <>
@@ -218,11 +195,7 @@ export default function BrowseDropsCommand() {
                       shortcut={Keyboard.Shortcut.Common.Refresh}
                       onAction={revalidate}
                     />
-                    <Action
-                      title="Open OwnDrop in Browser"
-                      icon={Icon.Globe}
-                      onAction={() => open(getServerUrl())}
-                    />
+                    <Action title="Open OwnDrop in Browser" icon={Icon.Globe} onAction={() => open(getServerUrl())} />
                   </ActionPanel.Section>
                   <ActionPanel.Section>
                     <Action

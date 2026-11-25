@@ -27,6 +27,7 @@ export interface DropItem {
   size: number;
   device: string;
   pinned: boolean;
+  previewStatus?: "pending" | "ready" | "failed";
   linkPreview?: LinkPreview;
   createdAt: string;
 }
@@ -120,6 +121,18 @@ function guessMime(filename: string): string {
     ".zip": "application/zip",
     ".mp4": "video/mp4",
     ".mov": "video/quicktime",
+    ".webm": "video/webm",
+    ".m4v": "video/mp4",
+    ".mkv": "video/x-matroska",
+    ".avi": "video/x-msvideo",
+    ".mp3": "audio/mpeg",
+    ".m4a": "audio/mp4",
+    ".wav": "audio/wav",
+    ".ogg": "audio/ogg",
+    ".flac": "audio/flac",
+    ".aac": "audio/aac",
+    ".avif": "image/avif",
+    ".bmp": "image/bmp",
   };
   return map[ext] ?? "application/octet-stream";
 }
@@ -210,10 +223,20 @@ export async function getImagePreview(item: DropItem, signal?: AbortSignal): Pro
   const key = createHash("sha256")
     .update(JSON.stringify([getCacheScope(), item.id]))
     .digest("hex");
+  const filenameExtension = path.extname(item.name ?? "").toLowerCase();
   const extension =
-    { "image/png": ".png", "image/jpeg": ".jpg", "image/gif": ".gif", "image/webp": ".webp", "image/svg+xml": ".svg" }[
-      item.mime ?? ""
-    ] ?? ".img";
+    {
+      "image/png": ".png",
+      "image/jpeg": ".jpg",
+      "image/gif": ".gif",
+      "image/webp": ".webp",
+      "image/svg+xml": ".svg",
+      "image/avif": ".avif",
+      "image/bmp": ".bmp",
+    }[item.mime ?? ""] ??
+    ([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif", ".bmp"].includes(filenameExtension)
+      ? filenameExtension
+      : ".img");
   const directory = path.join(environment.supportPath, "image-previews");
   const target = path.join(directory, `${key}${extension}`);
   try {

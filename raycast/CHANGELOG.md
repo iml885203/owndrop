@@ -1,5 +1,13 @@
 # OwnDrop Changelog
 
+## [Content Details] - 2026-11-25
+
+- Added full text and link cards with cover images, descriptions, and site information in Browse.
+- Added file metadata and Open File actions, plus default playback actions for video and audio.
+- Recognize older media uploads by file extension when the MIME type is unspecified.
+- Added MIME types for more video, audio, and image formats.
+- Image Copy now reuses the preview cache and writes native image pixels, with a separate Copy File action for file references.
+
 ## [Simplified Drop and Browse] - 2026-11-25
 
 - Reduced the command list to **Drop** and **Browse** with automatic clipboard detection and manual text/file fallback.

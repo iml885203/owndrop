@@ -3,7 +3,6 @@ import {
   Action,
   ActionPanel,
   Alert,
-  Clipboard,
   Color,
   confirmAlert,
   Icon,
@@ -18,7 +17,9 @@ import {
   Toast,
 } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
-import ImagePreview from "./image-preview";
+import DropDetail from "./drop-detail";
+import { getDropKind } from "./content";
+import { copyDrop } from "./clipboard";
 import {
   deleteDrop,
   downloadDropToDownloads,
@@ -48,10 +49,16 @@ function getItemSubtitle(item: DropItem): string {
 }
 
 function getItemIcon(item: DropItem): Icon {
-  if (item.type === "image") return Icon.Image;
-  if (item.type === "file") return Icon.Document;
-  if (extractUrl(item.text)) return Icon.Link;
-  return Icon.Text;
+  const icons = {
+    text: Icon.Text,
+    link: Icon.Link,
+    image: Icon.Image,
+    video: Icon.Video,
+    audio: Icon.Music,
+    pdf: Icon.Document,
+    file: Icon.Document,
+  };
+  return icons[getDropKind(item)];
 }
 
 export default function BrowseDropsCommand({ uploaded }: { uploaded?: DropItem } = {}) {
@@ -131,20 +138,33 @@ export default function BrowseDropsCommand({ uploaded }: { uploaded?: DropItem }
 
   const dropAction = () => launchCommand({ name: "drop-clipboard", type: LaunchType.UserInitiated });
   const selectedItem = visibleItems.find((item) => item.id === selectedId) ?? visibleItems[0];
-  const isImage = (item?: DropItem) => item?.type === "image" || item?.mime?.startsWith("image/") === true;
 
-  const handleDownload = async (item: DropItem, copyFileAfter: boolean) => {
+  const handleOpenFile = async (item: DropItem) => {
+    const toast = await showToast({ style: Toast.Style.Animated, title: "Opening file…" });
+    try {
+      const localPath = await downloadDropForClipboard(item);
+      await open(localPath);
+      toast.style = Toast.Style.Success;
+      toast.title = "Opened";
+    } catch (error) {
+      toast.style = Toast.Style.Failure;
+      toast.title = "Could not open file";
+      toast.message = (error as Error).message;
+    }
+  };
+
+  const handleDownload = async (item: DropItem, copyFileAfter: boolean, asFile = false) => {
     const toast = await showToast({
       style: Toast.Style.Animated,
       title: `${copyFileAfter ? "Copying" : "Downloading"} ${item.name || "file"}…`,
     });
     try {
-      const dest = await (copyFileAfter ? downloadDropForClipboard(item) : downloadDropToDownloads(item));
       if (copyFileAfter) {
-        await Clipboard.copy({ file: dest });
+        await copyDrop(item, asFile);
         toast.hide();
         await showHUD(`Copied ${item.name || "file"}`);
       } else {
+        const dest = await downloadDropToDownloads(item);
         toast.style = Toast.Style.Success;
         toast.title = "Downloaded to Downloads";
         toast.message = dest;
@@ -200,7 +220,7 @@ export default function BrowseDropsCommand({ uploaded }: { uploaded?: DropItem }
   return (
     <List
       navigationTitle={error && items?.length ? "Browse · Cached results" : "Browse"}
-      isShowingDetail={isImage(selectedItem)}
+      isShowingDetail={Boolean(selectedItem)}
       selectedItemId={selectedId ?? undefined}
       onSelectionChange={setSelectedId}
       isLoading={isLoading}
@@ -235,6 +255,7 @@ export default function BrowseDropsCommand({ uploaded }: { uploaded?: DropItem }
         />
       ) : (
         visibleItems.map((item) => {
+          const kind = getDropKind(item);
           const url = item.type === "text" ? extractUrl(item.text) : null;
           const accessories: List.Item.Accessory[] = [];
           if (item.id === uploaded?.id) accessories.push({ tag: { value: "Just dropped", color: Color.Green } });
@@ -256,9 +277,7 @@ export default function BrowseDropsCommand({ uploaded }: { uploaded?: DropItem }
               title={getItemTitle(item)}
               subtitle={getItemSubtitle(item)}
               accessories={accessories}
-              detail={
-                item.id === selectedItem?.id && isImage(item) ? <ImagePreview key={item.id} item={item} /> : undefined
-              }
+              detail={item.id === selectedItem?.id ? <DropDetail key={item.id} item={item} /> : undefined}
               actions={
                 <ActionPanel>
                   {item.type === "text" && item.text ? (
@@ -269,7 +288,24 @@ export default function BrowseDropsCommand({ uploaded }: { uploaded?: DropItem }
                     </>
                   ) : (
                     <>
+                      {(kind === "video" || kind === "audio") && (
+                        <Action
+                          title={kind === "video" ? "Play Video" : "Play Audio"}
+                          icon={Icon.Play}
+                          onAction={() => handleOpenFile(item)}
+                        />
+                      )}
                       <Action title="Copy" icon={Icon.Clipboard} onAction={() => handleDownload(item, true)} />
+                      {kind === "image" && (
+                        <Action
+                          title="Copy File"
+                          icon={Icon.Document}
+                          onAction={() => handleDownload(item, true, true)}
+                        />
+                      )}
+                      {kind !== "video" && kind !== "audio" && (
+                        <Action title="Open File" icon={Icon.Eye} onAction={() => handleOpenFile(item)} />
+                      )}
                       <Action
                         title="Download to Downloads"
                         icon={Icon.Download}

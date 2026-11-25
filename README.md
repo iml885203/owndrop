@@ -45,7 +45,7 @@ Most cross-device file transfer tools force you to **open a browser tab on both 
 
 | | Feature | Why it feels great |
 | :---: | :--- | :--- |
-| ⌨️ | **Raycast Extension (macOS & Windows)** | Hit a hotkey to `Drop Clipboard` or `Copy Latest Drop` without ever switching to a browser. |
+| ⌨️ | **Raycast Extension (macOS & Windows)** | Use `Drop` to send clipboard content and `Browse` to preview, open, or copy your drops. |
 | 📱 | **iPhone Apple Shortcuts** | Send from the native iOS Share Sheet; grab the newest drop from your Action Button or Control Center. |
 | ☁️ | **Cloudflare Free Tier ($0/mo)** | Workers + Static Assets + D1 SQLite + R2 (10 GB free, **$0 egress**) + daily Cron quota cleanup. |
 | 🐳 | **Docker Self-Hostable** | Exact same TypeScript/Hono codebase runs on Node 22 built-in `node:sqlite` (zero native builds). |
@@ -140,7 +140,7 @@ OwnDrop starts on `http://127.0.0.1:4180`. Put Caddy, Nginx, Traefik, or Cloudfl
 
 | Platform | Client | Daily Flow | Setup Guide |
 | :--- | :--- | :--- | :--- |
-| **macOS & Windows** | **Raycast Extension** | Global hotkeys for `Drop Clipboard`, `Copy Latest Drop`, `Browse Drops`, `Drop Files`, and macOS `Menu Bar` | [`raycast/README.md`](raycast/README.md) · [`Store Checklist`](docs/raycast-store.md) |
+| **macOS & Windows** | **Raycast Extension** | `Drop` automatically detects clipboard content; `Browse` previews text, links, and images, plays media, and copies content | [`raycast/README.md`](raycast/README.md) · [`Store Checklist`](docs/raycast-store.md) |
 | **iPhone & iPad** | **Apple Shortcuts** | Native iOS **Share Sheet** (`Send to OwnDrop`) + **Action Button** (`Get Latest OwnDrop`) | [`docs/shortcuts.md`](docs/shortcuts.md) |
 | **Terminal / Scripts** | **REST API (`curl`)** | Standard Bearer API (`POST /api/items/text`, `POST /api/items/file`, `GET /api/items/latest`) | [`docs/api.md`](docs/api.md) |
 

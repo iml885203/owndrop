@@ -4,7 +4,13 @@ import { List } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { type DropItem, getImagePreview } from "./api";
 
-export default function ImagePreview({ item }: { item: DropItem }) {
+export default function ImagePreview({
+  item,
+  metadata,
+}: {
+  item: DropItem;
+  metadata?: Parameters<typeof List.Item.Detail>[0]["metadata"];
+}) {
   const abortable = useRef<AbortController | null>(null);
   const { data, error, isLoading } = usePromise(
     async (id: string) => {
@@ -20,6 +26,7 @@ export default function ImagePreview({ item }: { item: DropItem }) {
 
   return (
     <List.Item.Detail
+      metadata={metadata}
       isLoading={isLoading}
       markdown={
         data

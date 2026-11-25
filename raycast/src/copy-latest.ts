@@ -1,5 +1,6 @@
 import { Clipboard, showHUD, showToast, Toast } from "@raycast/api";
-import { downloadDropForClipboard, getLatestDrop } from "./api";
+import { getLatestDrop } from "./api";
+import { copyDrop } from "./clipboard";
 
 export default async function CopyLatestCommand() {
   try {
@@ -17,8 +18,7 @@ export default async function CopyLatestCommand() {
       style: Toast.Style.Animated,
       title: `Copying ${latest.name || "latest file"}…`,
     });
-    const savedPath = await downloadDropForClipboard(latest);
-    await Clipboard.copy({ file: savedPath });
+    await copyDrop(latest);
     await showHUD(`Copied ${latest.name || "file"}`);
   } catch (err) {
     await showToast({

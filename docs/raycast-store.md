@@ -7,8 +7,8 @@ The `raycast/` folder is structured to satisfy Raycast Store submission guidelin
 1. Publish your OwnDrop server repository publicly on GitHub with MIT license and deployment docs.
 2. Replace `"author": "owndrop"` in `raycast/package.json` with your Raycast Store handle (from [raycast.com/settings](https://www.raycast.com/settings)).
 3. Capture 3–5 clean Raycast screenshots (2000×1250 PNG) inside `raycast/metadata/` showcasing:
-   - Browse Drops list with search & pinned items
-   - Drop Files form
+   - Browse list with search, pinned items, and content previews
+   - Drop form for text and file selection
    - Drop Text form
    - Preferences setup screen
 4. Verify lint & production build:

@@ -45,7 +45,7 @@
 
 | | 功能亮點 | 實際體驗 |
 | :---: | :--- | :--- |
-| ⌨️ | **跨平台 Raycast Extension（Mac & Windows）** | 一按快捷鍵立刻 `Drop Clipboard`（送出剪貼簿文字/截圖）或 `Copy Latest Drop`（拉最新一筆到剪貼簿）。 |
+| ⌨️ | **跨平台 Raycast Extension（Mac & Windows）** | `Drop` 自動送出剪貼簿內容，`Browse` 預覽、開啟或複製內容。 |
 | 📱 | **iPhone Apple 捷徑** | 在相簿、Safari、任何 App 點「分享 → Send to OwnDrop」背景直傳；把「Get Latest」綁到動作按鈕一秒取用。 |
 | ☁️ | **Cloudflare 免費方案原生架構（$0/月）** | Workers + Static Assets + D1（SQLite）+ R2（10 GB 免費、**零流量費**），搭配每日 Cron 自動清理防爆額度。 |
 | 🐳 | **同時支援 Docker 自架** | 同一套 Hono TypeScript 核心直接跑在 Node 22 內建 `node:sqlite`（無需原生 C++ 編譯）。 |
@@ -140,7 +140,7 @@ docker compose up -d --build
 
 | 平台 | 入口工具 | 日常操作 | 設定指南 |
 | :--- | :--- | :--- | :--- |
-| **macOS & Windows** | **Raycast Extension** | 全域快捷鍵一鍵 `Drop Clipboard`、`Copy Latest Drop`、`Browse Drops`、`Drop Files`、macOS 選單列 | [`raycast/README.md`](raycast/README.md) · [`上架清單`](docs/raycast-store.md) |
+| **macOS & Windows** | **Raycast Extension** | `Drop` 自動判斷剪貼簿內容；`Browse` 預覽文字、連結與圖片，播放影音並複製內容 | [`raycast/README.md`](raycast/README.md) · [`上架清單`](docs/raycast-store.md) |
 | **iPhone & iPad** | **Apple 捷徑** | 原生**系統分享選單**（`Send to OwnDrop`）+ **動作按鈕／控制中心**（`Get Latest OwnDrop`） | [`docs/shortcuts.md`](docs/shortcuts.md) |
 | **終端機 / 自動化** | **REST API (`curl`)** | 標準 Bearer API（`POST /api/items/text`、`POST /api/items/file`、`GET /api/items/latest`） | [`docs/api.md`](docs/api.md) |
 

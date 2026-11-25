@@ -34,7 +34,7 @@ Verify credentials and inspect server capabilities (used by Raycast & clients).
 List items ordered by `pinned DESC, created_at DESC`.
 
 ### `GET /api/items/latest`
-Return the single most recently created item (404 if empty). Ideal for `Copy Latest Drop` and iOS Shortcuts.
+Return the single most recently created item (404 if empty). Ideal for `Copy Latest Drop` and API clients.
 
 ### `POST /api/items/text`
 ```bash

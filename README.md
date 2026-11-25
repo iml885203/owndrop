@@ -9,7 +9,6 @@
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Free_Tier-$0%2Fmo-f38020?style=flat-square&logo=cloudflare&logoColor=white)](docs/cloudflare-deploy.md)
 [![Docker Ready](https://img.shields.io/badge/Docker-Self--Hostable-2496ed?style=flat-square&logo=docker&logoColor=white)](docs/self-hosting.md)
 [![Raycast](https://img.shields.io/badge/Raycast-macOS_%26_Windows-ff6363?style=flat-square&logo=raycast&logoColor=white)](raycast/README.md)
-[![iOS Shortcuts](https://img.shields.io/badge/iPhone-Apple_Shortcuts-6366f1?style=flat-square&logo=apple&logoColor=white)](docs/shortcuts.md)
 
 <br />
 <br />
@@ -32,11 +31,11 @@ Most cross-device file transfer tools force you to **open a browser tab on both 
 
 **OwnDrop flips that model:**
 - Your **Web UI** stays out of the way as a clean history & management hub.
-- Your **daily transfers** happen directly inside native shortcuts on **macOS**, **Windows**, and **iPhone** — no hunting for browser tabs, no pairing codes, no third-party SaaS limits.
+- Send and receive text, links, screenshots, and files through the web app or the Raycast extension on **macOS** and **Windows**.
 - Runs for **$0/month on Cloudflare's free tier** (Workers + D1 + R2) or in **one tiny Docker container** on your own server.
 
 <p align="center">
-  <img src="docs/assets/workflow-diagram.png" alt="How OwnDrop works across Mac, Windows, iPhone, and Cloudflare/Docker" width="100%" />
+  <img src="docs/assets/workflow-diagram.png" alt="How OwnDrop works across desktop clients, web, Cloudflare, and Docker" width="100%" />
 </p>
 
 ---
@@ -46,12 +45,11 @@ Most cross-device file transfer tools force you to **open a browser tab on both 
 | | Feature | Why it feels great |
 | :---: | :--- | :--- |
 | ⌨️ | **Raycast Extension (macOS & Windows)** | Use `Drop` to send clipboard content and `Browse` to preview, open, or copy your drops. |
-| 📱 | **iPhone Apple Shortcuts** | Send from the native iOS Share Sheet; grab the newest drop from your Action Button or Control Center. |
 | ☁️ | **Cloudflare Free Tier ($0/mo)** | Workers + Static Assets + D1 SQLite + R2 (10 GB free, **$0 egress**) + daily Cron quota cleanup. |
 | 🐳 | **Docker Self-Hostable** | Exact same TypeScript/Hono codebase runs on Node 22 built-in `node:sqlite` (zero native builds). |
-| 🔑 | **Per-Device Revocable Tokens** | Each device gets its own `owd_...` token & auto-tags items (`MacBook Pro`, `Windows PC`, `iPhone`). Revoke one device without breaking the rest. |
+| 🔑 | **Per-Device Revocable Tokens** | Each connected client gets its own `owd_...` token and auto-tags items by device. Revoke one client without breaking the rest. |
 | 🔐 | **Password + Built-in OIDC** | Works out of the box with a single password, or connect **Pocket ID / Authentik / Authelia** via standard PKCE S256 OIDC. |
-| 📦 | **Large Files (> 90 MB)** | Direct multipart uploads for small files & iOS Shortcuts, plus optional **R2 Presigned Direct Uploads** up to 512 MB+. |
+| 📦 | **Large Files (> 90 MB)** | Direct multipart uploads for small files, plus optional **R2 Presigned Direct Uploads** up to 512 MB+. |
 
 ---
 
@@ -69,7 +67,7 @@ Drag & drop files anywhere on the page, press `⌘V` / `Ctrl+V` to upload screen
 </p>
 
 ### Built-in Device Manager & Zero-Browser Setup Guide
-Click **Devices** to mint revocable per-device tokens and copy ready-to-paste setup snippets for Raycast, iPhone Shortcuts, and CLI.
+Click **Devices** to mint revocable per-device tokens and copy ready-to-paste setup snippets for Raycast and CLI.
 
 <p align="center">
   <img src="docs/assets/web-devices-dark.png" alt="OwnDrop Connected Devices & Zero-Browser Setup Modal" width="100%" />
@@ -135,13 +133,12 @@ OwnDrop starts on `http://127.0.0.1:4180`. Put Caddy, Nginx, Traefik, or Cloudfl
 ## 🔌 Connect Your Devices (Zero-Browser Workflow)
 
 1. Open your deployed OwnDrop web UI and sign in.
-2. Click **Devices** → create a token for each device (`MacBook Pro`, `Windows PC`, `iPhone`).
+2. Click **Devices** → create a token for each client you connect, such as Raycast or a script.
 3. Wire up your native clients once — enjoy lifetime zero-browser drops:
 
 | Platform | Client | Daily Flow | Setup Guide |
 | :--- | :--- | :--- | :--- |
 | **macOS & Windows** | **Raycast Extension** | `Drop` automatically detects clipboard content; `Browse` previews text, links, and images, plays media, and copies content | [`raycast/README.md`](raycast/README.md) · [`Store Checklist`](docs/raycast-store.md) |
-| **iPhone & iPad** | **Apple Shortcuts** | Native iOS **Share Sheet** (`Send to OwnDrop`) + **Action Button** (`Get Latest OwnDrop`) | [`docs/shortcuts.md`](docs/shortcuts.md) |
 | **Terminal / Scripts** | **REST API (`curl`)** | Standard Bearer API (`POST /api/items/text`, `POST /api/items/file`, `GET /api/items/latest`) | [`docs/api.md`](docs/api.md) |
 
 ---

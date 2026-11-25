@@ -503,18 +503,9 @@ export function App() {
               </div>
 
               {me && (
-                <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--muted)]">
-                  <span>
-                    Storage used: {formatBytes(me.stats.fileBytes)} / {me.maxStorageMb} MB · Retention {me.retentionDays}d
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setDevicesOpen(true)}
-                    className="border-0 bg-transparent p-0 text-xs font-medium text-[var(--accent)] hover:underline cursor-pointer"
-                  >
-                    Set up Raycast or iPhone Shortcuts →
-                  </button>
-                </div>
+                <p className="mb-3 text-xs text-[var(--muted)]">
+                  Storage used: {formatBytes(me.stats.fileBytes)} / {me.maxStorageMb} MB · Retention {me.retentionDays}d
+                </p>
               )}
 
               {items.length === 0 ? (
@@ -523,7 +514,7 @@ export function App() {
                   <p className="mt-1.5 text-xs text-[var(--muted)]">
                     {search
                       ? "Try a different search keyword."
-                      : "Paste text, drop a file, or connect Raycast / iOS Shortcuts to send from any device."}
+                      : "Paste text or upload a file to get started."}
                   </p>
                 </div>
               ) : (

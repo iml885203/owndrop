@@ -66,7 +66,7 @@ export function createOwnDropApp(deps: AppDependencies) {
   };
 
   const requireMutationOrigin = (c: Context, authCtx: AuthContext): Response | null => {
-    // Bearer tokens (Raycast, iOS Shortcuts, CLI) do not require browser Origin header.
+    // Bearer tokens (Raycast, CLI, and other API clients) do not require browser Origin header.
     if (authCtx.kind !== "session") return null;
     if (!auth.isOriginValid(c.req.raw.headers)) {
       return c.json({ error: "Origin verification failed" }, 403);

@@ -9,7 +9,6 @@
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_免費方案-$0%2F月-f38020?style=flat-square&logo=cloudflare&logoColor=white)](docs/cloudflare-deploy.md)
 [![Docker Ready](https://img.shields.io/badge/Docker-支援自架-2496ed?style=flat-square&logo=docker&logoColor=white)](docs/self-hosting.md)
 [![Raycast](https://img.shields.io/badge/Raycast-macOS_%26_Windows-ff6363?style=flat-square&logo=raycast&logoColor=white)](raycast/README.md)
-[![iOS Shortcuts](https://img.shields.io/badge/iPhone-Apple_捷徑-6366f1?style=flat-square&logo=apple&logoColor=white)](docs/shortcuts.md)
 
 <br />
 <br />
@@ -32,7 +31,7 @@
 
 **OwnDrop 把使用邏輯反過來：**
 - **網頁介面**退居二線，負責歷史搜尋、釘選管理與新增裝置。
-- **日常 80% 的收發**直接長在你的系統原生入口：**macOS 與 Windows 用 Raycast 快捷鍵**、**iPhone 用系統分享選單與動作按鈕**，一鍵送出、一鍵拉取，完全不用開網頁。
+- 透過網頁或 **macOS 與 Windows 的 Raycast 擴充功能**，跨裝置傳送文字、連結、截圖與檔案。
 - **免費跑在 Cloudflare（$0/月）**（Workers + D1 + R2），也支援 **Docker 單容器自架**。
 
 <p align="center">
@@ -46,12 +45,11 @@
 | | 功能亮點 | 實際體驗 |
 | :---: | :--- | :--- |
 | ⌨️ | **跨平台 Raycast Extension（Mac & Windows）** | `Drop` 自動送出剪貼簿內容，`Browse` 預覽、開啟或複製內容。 |
-| 📱 | **iPhone Apple 捷徑** | 在相簿、Safari、任何 App 點「分享 → Send to OwnDrop」背景直傳；把「Get Latest」綁到動作按鈕一秒取用。 |
 | ☁️ | **Cloudflare 免費方案原生架構（$0/月）** | Workers + Static Assets + D1（SQLite）+ R2（10 GB 免費、**零流量費**），搭配每日 Cron 自動清理防爆額度。 |
 | 🐳 | **同時支援 Docker 自架** | 同一套 Hono TypeScript 核心直接跑在 Node 22 內建 `node:sqlite`（無需原生 C++ 編譯）。 |
-| 🔑 | **多裝置獨立可撤銷 Token** | 每台裝置專屬一把 `owd_...` 鑰匙，自動標記來源裝置名稱（如 `MacBook Pro`、`iPhone`）；某台換機直接單獨撤銷，不影響其他裝置。 |
+| 🔑 | **各客戶端獨立可撤銷 Token** | 每個連線客戶端有專屬 `owd_...` Token，項目會自動標記來源；撤銷單一 Token 不影響其他連線。 |
 | 🔐 | **密碼登入 + 內建標準 OIDC** | 開箱即支援單一密碼登入，也可選配直連 **Pocket ID / Authentik / Authelia**（標準 PKCE S256 + 群組權限驗證）。 |
-| 📦 | **突破大檔限制（> 90 MB）** | 小檔與 iOS 捷徑走直覺單次上傳；設定 R2 S3 金鑰後自動啟用 **R2 Presigned 直傳**，大檔最高可傳 512 MB+。 |
+| 📦 | **突破大檔限制（> 90 MB）** | 小檔採單次上傳；設定 R2 S3 金鑰後自動啟用 **R2 Presigned 直傳**，大檔最高可傳 512 MB+。 |
 
 ---
 
@@ -69,7 +67,7 @@
 </p>
 
 ### 內建「裝置管理」與「零開網頁設定精靈」
-點右上角 **Devices** 即可一鍵發放／撤銷各裝置 Token，系統會自動帶入你的伺服器網址，30 秒完成 Raycast、iPhone 捷徑或終端機設定。
+點右上角 **Devices** 即可發放／撤銷各裝置 Token，並複製 Raycast 或終端機所需的連線資料。
 
 <p align="center">
   <img src="docs/assets/web-devices-dark.png" alt="OwnDrop 裝置管理與設定精靈" width="100%" />
@@ -135,13 +133,12 @@ docker compose up -d --build
 ## 🔌 連接你的裝置（日常再也不用開網頁）
 
 1. 登入 OwnDrop 網頁版，點右上角 **Devices**。
-2. 為每台主力裝置建立專屬 Token（例如 `MacBook Pro`、`Windows PC`、`iPhone`）。
+2. 為要連線的客戶端建立專屬 Token，例如 Raycast 或自動化指令碼。
 3. 各平台一次性接好線，之後完全免開網頁：
 
 | 平台 | 入口工具 | 日常操作 | 設定指南 |
 | :--- | :--- | :--- | :--- |
 | **macOS & Windows** | **Raycast Extension** | `Drop` 自動判斷剪貼簿內容；`Browse` 預覽文字、連結與圖片，播放影音並複製內容 | [`raycast/README.md`](raycast/README.md) · [`上架清單`](docs/raycast-store.md) |
-| **iPhone & iPad** | **Apple 捷徑** | 原生**系統分享選單**（`Send to OwnDrop`）+ **動作按鈕／控制中心**（`Get Latest OwnDrop`） | [`docs/shortcuts.md`](docs/shortcuts.md) |
 | **終端機 / 自動化** | **REST API (`curl`)** | 標準 Bearer API（`POST /api/items/text`、`POST /api/items/file`、`GET /api/items/latest`） | [`docs/api.md`](docs/api.md) |
 
 ---

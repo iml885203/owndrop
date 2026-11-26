@@ -49,31 +49,32 @@ export function ImageModal({ item, onClose, onCopyImage, onFlash }: ImageModalPr
       onClick={onClose}
     >
       <div
-        className="card flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden"
+        className="card @container flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] px-4 py-3">
-          <div className="min-w-0 truncate text-sm text-[var(--muted)]">
-            <span className="font-medium text-[var(--ink)]">{item.name || "Image"}</span>
-            {" · "}
-            {formatBytes(item.size)}
+        <div className="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-1 border-b border-[var(--border)] px-4 py-3">
+          <div className="flex min-w-0 flex-1 basis-44 items-baseline gap-2 text-sm">
+            <span className="truncate font-medium text-[var(--ink)]" title={item.name || "Image"}>
+              {item.name || "Image"}
+            </span>
+            <span className="shrink-0 whitespace-nowrap text-[var(--muted)]">{formatBytes(item.size)}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <button type="button" className="btn btn-ghost" onClick={() => onCopyImage(item)}>
+          <div className="ml-auto flex shrink-0 items-center gap-1 whitespace-nowrap">
+            <button type="button" className="btn btn-ghost min-w-11" aria-label="Copy" onClick={() => onCopyImage(item)}>
               <Copy className="size-4" />
-              <span>Copy</span>
+              <span className="hidden @min-[28rem]:inline">Copy</span>
             </button>
             {typeof navigator.share === "function" && (
-              <button type="button" className="btn btn-ghost" disabled={sharing} onClick={() => void shareNative()}>
+              <button type="button" className="btn btn-ghost min-w-11" aria-label={sharing ? "Preparing…" : "Share / Save"} disabled={sharing} onClick={() => void shareNative()}>
                 <Share2 className="size-4" />
-                <span>{sharing ? "Preparing…" : "Share / Save"}</span>
+                <span className="hidden @min-[28rem]:inline">{sharing ? "Preparing…" : "Share / Save"}</span>
               </button>
             )}
-            <a href={src} download={item.name || "image"} className="btn btn-ghost">
+            <a href={src} download={item.name || "image"} className="btn btn-ghost min-w-11" aria-label="Download">
               <Download className="size-4" />
-              <span>Download</span>
+              <span className="hidden @min-[28rem]:inline">Download</span>
             </a>
-            <button type="button" className="btn btn-ghost !px-2" onClick={onClose} aria-label="Close">
+            <button type="button" className="btn btn-ghost min-w-11 px-2!" onClick={onClose} aria-label="Close">
               <X className="size-4" />
             </button>
           </div>

@@ -1,4 +1,29 @@
+import { locale, t } from "./i18n";
 import type { ApiTokenView, CreatedApiToken, DropItem, MeInfo, SessionInfo } from "./types";
+
+export class ApiError extends Error {
+  constructor(readonly status: number, detail?: string) {
+    super(localizeApiError(status, detail));
+    this.name = "ApiError";
+  }
+}
+
+function localizeApiError(status: number, detail?: string): string {
+  if (detail === "Invalid password") return t("invalidPassword");
+  if (detail === "Too many login attempts. Please wait a few minutes.") return t("loginLimited");
+  const textLimit = detail?.match(/^Text must be between 1 and (\d+) bytes$/);
+  if (textLimit) return t("textTooLarge", { max: Number(textLimit[1]) });
+  if (status === 413) return t("fileTooLarge");
+  if (locale === "en" && detail) return detail;
+  if (status === 404) return t("notFound");
+  return t("requestFailed", { status });
+}
+
+export function errorMessage(error: unknown): string {
+  if (error instanceof ApiError) return error.message;
+  if (error instanceof TypeError) return t("networkFailed");
+  return locale === "en" && error instanceof Error ? error.message : t("unexpectedError");
+}
 
 async function requestJson<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(path, {
@@ -7,7 +32,7 @@ async function requestJson<T>(path: string, init: RequestInit = {}): Promise<T> 
   });
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { error?: string };
-    throw new Error(body.error || `Request failed (${res.status})`);
+    throw new ApiError(res.status, typeof body?.error === "string" ? body.error : undefined);
   }
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
@@ -67,7 +92,7 @@ export const api = {
         body: file,
       });
       if (!putRes.ok) {
-        throw new Error(`Direct storage upload failed (${putRes.status})`);
+        throw new ApiError(putRes.status, `Direct storage upload failed (${putRes.status})`);
       }
       return requestJson<DropItem>("/api/uploads/complete", {
         method: "POST",

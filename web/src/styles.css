@@ -89,6 +89,19 @@ a:focus-visible {
   border-radius: 12px;
 }
 
+/* Prefer the local script's typeface for Han characters shared across locales. */
+body:lang(zh-Hans) {
+  font-family: "Avenir Next", Avenir, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+body:lang(ja) {
+  font-family: "Avenir Next", Avenir, "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+}
+
+body:lang(ko) {
+  font-family: "Avenir Next", Avenir, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

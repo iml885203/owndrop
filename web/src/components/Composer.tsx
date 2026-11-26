@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { useRef, useState } from "react";
 import { Check, Clipboard, Pencil, Send, Upload } from "lucide-react";
 
@@ -49,8 +50,8 @@ export function Composer({
     <section className="card p-5 md:sticky md:top-20">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <h1 className="m-0 text-xl font-semibold tracking-tight">Drop anything</h1>
-          <p className="mt-1 text-xs text-[var(--muted)]">Send to your other devices.</p>
+          <h1 className="m-0 text-xl font-semibold tracking-tight">{t("dropAnything")}</h1>
+          <p className="mt-1 text-xs text-[var(--muted)]">{t("sendToDevices")}</p>
         </div>
       </div>
 
@@ -70,9 +71,9 @@ export function Composer({
               autoFocus
               onChange={(e) => setDeviceDraft(e.target.value)}
               onBlur={commitDevice}
-              aria-label="Device name"
+              aria-label={t("deviceName")}
             />
-            <button type="submit" className="btn btn-outline !min-h-8 !px-2.5" aria-label="Save device name">
+            <button type="submit" className="btn btn-outline !min-h-8 !px-2.5" aria-label={t("saveDeviceName")}>
               <Check className="size-3.5" />
             </button>
           </form>
@@ -84,9 +85,9 @@ export function Composer({
               setEditingDevice(true);
             }}
             className="inline-flex items-center gap-1.5 rounded-md bg-[var(--subtle)] px-2.5 py-1 text-xs text-[var(--muted)] hover:text-[var(--ink)] cursor-pointer border-0"
-            title="Click to rename this device"
+            title={t("renameDevice")}
           >
-            <span>From {device}</span>
+            <span>{t("fromDevice", { device })}</span>
             <Pencil className="size-3" />
           </button>
         )}
@@ -96,8 +97,8 @@ export function Composer({
         className="field min-h-[112px] resize-y text-sm leading-relaxed"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        aria-label="Text or link to drop"
-        placeholder="Paste text or a link…"
+        aria-label={t("textOrLink")}
+        placeholder={t("pastePlaceholder")}
         maxLength={65536}
         onKeyDown={(e) => {
           if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -116,7 +117,7 @@ export function Composer({
         onClick={() => void submitText()}
       >
         <Send className="size-4" />
-        <span>Drop Text</span>
+        <span>{t("dropText")}</span>
       </button>
 
       <div className="mt-2 grid grid-cols-2 gap-2">
@@ -134,26 +135,26 @@ export function Composer({
         />
         <button
           type="button"
-          className="btn btn-outline"
+          className="btn btn-outline min-w-0 px-2! py-1!"
           disabled={busy}
           onClick={() => fileInputRef.current?.click()}
         >
-          <Upload className="size-4" />
-          <span className="truncate">{uploadProgress || "Upload Files"}</span>
+          <Upload className="size-4 shrink-0" />
+          <span className="min-w-0">{uploadProgress || t("uploadFiles")}</span>
         </button>
         <button
           type="button"
-          className="btn btn-outline"
+          className="btn btn-outline min-w-0 px-2! py-1!"
           disabled={busy}
           onClick={() => void onPasteAndSend()}
         >
-          <Clipboard className="size-4" />
-          <span className="truncate">Paste &amp; Drop</span>
+          <Clipboard className="size-4 shrink-0" />
+          <span className="min-w-0">{t("pasteDrop")}</span>
         </button>
       </div>
 
       <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">
-        Drag files or paste an image · {directUploadEnabled ? maxPresignedFileMb : maxFileMb} MB per file
+        {t("fileLimit", { size: directUploadEnabled ? maxPresignedFileMb : maxFileMb })}
       </p>
     </section>
   );

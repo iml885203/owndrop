@@ -1,6 +1,7 @@
+import { formatNumber, t } from "./i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CloudUpload, KeyRound, LogIn, LogOut, Moon, RefreshCw, Search, Sun } from "lucide-react";
-import { api } from "./api";
+import { api, ApiError, errorMessage } from "./api";
 import { Composer } from "./components/Composer";
 import { DevicesPanel } from "./components/DevicesPanel";
 import { ImageModal } from "./components/ImageModal";
@@ -54,10 +55,10 @@ export function App() {
         const list = await api.listItems(query);
         setItems(list);
       } catch (err) {
-        if ((err as Error).message.includes("401") || (err as Error).message.includes("Unauthorized")) {
+        if (err instanceof ApiError && err.status === 401) {
           setSession((prev) => (prev ? { ...prev, authenticated: false } : prev));
         } else if (!quiet) {
-          flash((err as Error).message);
+          flash(errorMessage(err));
         }
       } finally {
         if (!quiet) setLoadingItems(false);
@@ -72,7 +73,7 @@ export function App() {
       const s = await api.getSession();
       setSession(s);
       if (new URLSearchParams(window.location.search).get("error") === "oidc") {
-        setLoginError("OIDC sign-in failed or your account is not authorized.");
+        setLoginError(t("oidcFailed"));
       }
       if (s.authenticated) {
         const [meInfo, list] = await Promise.all([api.getMe(), api.listItems("")]);
@@ -80,7 +81,7 @@ export function App() {
         setItems(list);
       }
     } catch (err) {
-      setBootError((err as Error).message);
+      setBootError(errorMessage(err));
     }
   }, []);
 
@@ -123,12 +124,12 @@ export function App() {
       const errors: string[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i]!;
-        setUploadProgress(`Uploading ${i + 1}/${files.length}`);
+        setUploadProgress(t("uploading", { current: i + 1, total: files.length }));
         try {
           await api.uploadFile(file, device, me);
           ok += 1;
         } catch (err) {
-          errors.push(`${file.name}: ${(err as Error).message}`);
+          errors.push(`${file.name}: ${errorMessage(err)}`);
         }
       }
       setBusy(false);
@@ -137,7 +138,7 @@ export function App() {
         await fetchItems(search, true);
         api.getMe().then(setMe).catch(() => {});
       }
-      if (errors.length === 0) flash(`Uploaded ${ok} file${ok > 1 ? "s" : ""}`);
+      if (errors.length === 0) flash(t(ok === 1 ? "uploadedOne" : "uploadedMany", { count: ok }));
       else flash(errors[0]!);
     },
     [busy, device, me, fetchItems, search, flash],
@@ -207,7 +208,7 @@ export function App() {
       setPassword("");
       await boot();
     } catch (err) {
-      setLoginError((err as Error).message);
+      setLoginError(errorMessage(err));
     } finally {
       setLoggingIn(false);
     }
@@ -220,7 +221,7 @@ export function App() {
       setItems([]);
       setMe(null);
     } catch (err) {
-      flash((err as Error).message);
+      flash(errorMessage(err));
     }
   };
 
@@ -229,9 +230,9 @@ export function App() {
     try {
       await api.addText(text, device);
       await fetchItems(search, true);
-      flash("Dropped to clipboard");
+      flash(t("dropped"));
     } catch (err) {
-      flash((err as Error).message);
+      flash(errorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -239,7 +240,7 @@ export function App() {
 
   const handlePasteAndSend = async () => {
     if (!navigator.clipboard) {
-      flash("Clipboard access unavailable; paste directly into the box.");
+      flash(t("clipboardUnavailable"));
       return;
     }
     try {
@@ -257,27 +258,27 @@ export function App() {
       }
       const text = (await navigator.clipboard.readText()).trim();
       if (!text) {
-        flash("Clipboard is empty");
+        flash(t("clipboardEmpty"));
         return;
       }
       await handleSendText(text);
     } catch {
-      flash("Clipboard permission denied; paste into the box instead.");
+      flash(t("clipboardDenied"));
     }
   };
 
   const handleCopyText = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value);
-      flash("Copied to clipboard");
+      flash(t("clipboardCopied"));
     } catch {
-      flash("Clipboard write blocked by browser");
+      flash(t("clipboardBlocked"));
     }
   };
 
   const handleCopyImage = async (item: DropItem) => {
     if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
-      flash("Browser cannot copy images directly; use Download.");
+      flash(t("imageCopyUnsupported"));
       return;
     }
     try {
@@ -296,9 +297,9 @@ export function App() {
         );
       }
       await navigator.clipboard.write([new ClipboardItem({ "image/png": pngBlob })]);
-      flash("Image copied");
+      flash(t("imageCopied"));
     } catch {
-      flash("Could not copy image; try Download.");
+      flash(t("imageCopyFailed"));
     }
   };
 
@@ -307,23 +308,23 @@ export function App() {
     try {
       await api.setPinned(item.id, !item.pinned);
       await fetchItems(search, true);
-      flash(item.pinned ? "Unpinned" : "Pinned to top");
+      flash(t(item.pinned ? "unpinned" : "pinnedToTop"));
     } catch (err) {
-      flash((err as Error).message);
+      flash(errorMessage(err));
     } finally {
       setPinningId("");
     }
   };
 
   const handleDelete = async (item: DropItem) => {
-    if (!window.confirm(`Delete "${item.name || item.text?.slice(0, 60) || "this item"}"?`)) return;
+    if (!window.confirm(t("deleteConfirm", { name: item.name || item.text?.slice(0, 60) || t("thisItem") }))) return;
     try {
       await api.deleteItem(item.id);
       setItems((prev) => prev.filter((x) => x.id !== item.id));
       api.getMe().then(setMe).catch(() => {});
-      flash("Deleted");
+      flash(t("deleted"));
     } catch (err) {
-      flash((err as Error).message);
+      flash(errorMessage(err));
     }
   };
 
@@ -338,8 +339,8 @@ export function App() {
         <div className="pointer-events-none fixed inset-0 z-50 grid place-items-center bg-[var(--bg)]/90 p-6 backdrop-blur-sm">
           <div className="flex w-full max-w-lg flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-[var(--accent)] bg-[var(--surface)] p-12 text-center shadow-2xl">
             <CloudUpload className="size-12 text-[var(--accent)]" />
-            <strong className="text-xl">Drop files to upload</strong>
-            <span className="text-sm text-[var(--muted)]">Release to add directly to your OwnDrop inbox</span>
+            <strong className="text-xl">{t("dragUpload")}</strong>
+            <span className="text-sm text-[var(--muted)]">{t("releaseUpload")}</span>
           </div>
         </div>
       )}
@@ -357,8 +358,8 @@ export function App() {
               type="button"
               className="btn btn-ghost !px-2.5"
               onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              title={theme === "dark" ? "Light mode" : "Dark mode"}
+              aria-label={theme === "dark" ? t("switchLight") : t("switchDark")}
+              title={theme === "dark" ? t("light") : t("dark")}
             >
               {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </button>
@@ -366,11 +367,11 @@ export function App() {
               <>
                 <button type="button" className="btn btn-outline" onClick={() => setDevicesOpen(true)}>
                   <KeyRound className="size-4 text-[var(--accent)]" />
-                  <span>Devices</span>
+                  <span>{t("devices")}</span>
                 </button>
-                <button type="button" className="btn btn-ghost" onClick={() => void handleLogout()}>
+                <button type="button" className="btn btn-ghost" aria-label={t("signOut")} onClick={() => void handleLogout()}>
                   <LogOut className="size-4" />
-                  <span className="hidden sm:inline">Sign out</span>
+                  <span className="hidden sm:inline">{t("signOut")}</span>
                 </button>
               </>
             )}
@@ -381,51 +382,49 @@ export function App() {
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         {bootError ? (
           <div className="mx-auto mt-16 max-w-md text-center">
-            <h1 className="text-xl font-semibold">Cannot reach OwnDrop</h1>
+            <h1 className="text-xl font-semibold">{t("cannotReach")}</h1>
             <p className="mt-2 text-sm text-[var(--muted)]">{bootError}</p>
             <button type="button" className="btn btn-outline mt-4" onClick={() => void boot()}>
               <RefreshCw className="size-4" />
-              <span>Retry</span>
+              <span>{t("retry")}</span>
             </button>
           </div>
         ) : !session ? (
-          <div className="mx-auto mt-20 max-w-sm text-center text-sm text-[var(--muted)]">Loading OwnDrop…</div>
+          <div className="mx-auto mt-20 max-w-sm text-center text-sm text-[var(--muted)]">{t("loading")}</div>
         ) : session.setupRequired ? (
           <section className="card mx-auto mt-12 max-w-lg p-7">
-            <h1 className="m-0 text-2xl font-bold tracking-tight">Finish your OwnDrop setup</h1>
+            <h1 className="m-0 text-2xl font-bold tracking-tight">{t("setupHeading")}</h1>
             <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-              Your Cloudflare Worker is live! Add these two secrets in{" "}
-              <strong>Cloudflare Dashboard → Workers &amp; Pages → owndrop → Settings → Variables and Secrets</strong>, then reload this page:
+              {t("setupIntro")}
             </p>
             <ul className="mt-4 space-y-2 rounded-xl bg-[var(--subtle)] p-4 text-xs leading-relaxed">
               <li>
-                <code>OWNDROP_PASSWORD</code> — Your login password (or configure <code>OWNDROP_OIDC_*</code>)
+                <code>OWNDROP_PASSWORD</code> — {t("setupPassword")}
               </li>
               <li>
-                <code>OWNDROP_SESSION_SECRET</code> — Any random string of at least 32 characters (e.g.{" "}
-                <code>openssl rand -base64 48</code>)
+                <code>OWNDROP_SESSION_SECRET</code> — {t("setupSecret")} (<code>openssl rand -base64 48</code>)
               </li>
             </ul>
             {session.setupMessage && (
-              <p className="mt-3 text-xs text-[var(--muted)]">Details: {session.setupMessage}</p>
+              <p className="mt-3 text-xs text-[var(--muted)]">{t("details", { message: session.setupMessage })}</p>
             )}
             <button type="button" className="btn btn-primary mt-5 w-full" onClick={() => void boot()}>
               <RefreshCw className="size-4" />
-              <span>I&apos;ve added the secrets — Check again</span>
+              <span>{t("checkAgain")}</span>
             </button>
           </section>
         ) : !session.authenticated ? (
           <section className="card mx-auto mt-12 max-w-md p-7">
-            <h1 className="m-0 text-2xl font-bold tracking-tight">Your private cross-device drop</h1>
+            <h1 className="m-0 text-2xl font-bold tracking-tight">{t("signInHeading")}</h1>
             <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-              Sign in to access your synced clipboard, files, and connected devices.
+              {t("signInDescription")}
             </p>
 
             {session.oidcEnabled && (
               <div className="mt-6">
                 <a href="/auth/oidc" className="btn btn-primary w-full">
                   <LogIn className="size-4" />
-                  <span>Sign in with SSO (OIDC)</span>
+                  <span>{t("sso")}</span>
                 </a>
               </div>
             )}
@@ -433,12 +432,12 @@ export function App() {
             {session.passwordEnabled && (
               <form onSubmit={(e) => void handleLogin(e)} className="mt-5 space-y-3">
                 {session.oidcEnabled && (
-                  <div className="relative py-1 text-center text-xs text-[var(--muted)]">or sign in with password</div>
+                  <div className="relative py-1 text-center text-xs text-[var(--muted)]">{t("orPassword")}</div>
                 )}
                 <input
                   type="password"
                   className="field"
-                  placeholder="Enter password"
+                  placeholder={t("password")}
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -449,7 +448,7 @@ export function App() {
                   disabled={loggingIn || !password}
                 >
                   <LogIn className="size-4" />
-                  <span>{loggingIn ? "Signing in…" : "Sign in"}</span>
+                  <span>{loggingIn ? t("signingIn") : t("signIn")}</span>
                 </button>
               </form>
             )}
@@ -474,17 +473,17 @@ export function App() {
             <section className="min-w-0">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <h2 className="m-0 text-xl font-semibold tracking-tight">Recent Drops</h2>
+                  <h2 className="m-0 text-xl font-semibold tracking-tight">{t("recent")}</h2>
                   <span className="rounded-full bg-[var(--subtle)] px-2 py-0.5 text-xs font-medium text-[var(--muted)]">
-                    {items.length}
+                    {formatNumber(items.length)}
                   </span>
                   <button
                     type="button"
                     className="btn btn-ghost !min-h-8 !px-2"
                     disabled={loadingItems}
                     onClick={() => void fetchItems(search)}
-                    title="Refresh"
-                    aria-label="Refresh"
+                    title={t("refresh")}
+                    aria-label={t("refresh")}
                   >
                     <RefreshCw className={`size-4 ${loadingItems ? "animate-spin" : ""}`} />
                   </button>
@@ -495,7 +494,7 @@ export function App() {
                   <input
                     type="search"
                     className="field !h-10 !pl-9 text-sm"
-                    placeholder="Search text, file, device…"
+                    placeholder={t("search")}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
@@ -504,17 +503,17 @@ export function App() {
 
               {me && (
                 <p className="mb-3 text-xs text-[var(--muted)]">
-                  Storage used: {formatBytes(me.stats.fileBytes)} / {me.maxStorageMb} MB · Retention {me.retentionDays}d
+                  {t("storage", { used: formatBytes(me.stats.fileBytes), max: me.maxStorageMb, days: me.retentionDays })}
                 </p>
               )}
 
               {items.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-[var(--border)] px-6 py-16 text-center">
-                  <p className="m-0 font-semibold">{search ? "No matching drops" : "Nothing dropped yet"}</p>
+                  <p className="m-0 font-semibold">{search ? t("noResults") : t("empty")}</p>
                   <p className="mt-1.5 text-xs text-[var(--muted)]">
                     {search
-                      ? "Try a different search keyword."
-                      : "Paste text or upload a file to get started."}
+                      ? t("trySearch")
+                      : t("startDrop")}
                   </p>
                 </div>
               ) : (

@@ -1,6 +1,7 @@
+import { t } from "../i18n";
 import { useEffect, useState } from "react";
 import { Check, Copy, KeyRound, Plus, Trash2, X } from "lucide-react";
-import { api } from "../api";
+import { api, errorMessage } from "../api";
 import type { ApiTokenView, CreatedApiToken } from "../types";
 import { formatRelativeTime } from "../utils";
 
@@ -25,7 +26,7 @@ export function DevicesPanel({ open, onClose, onFlash }: DevicesPanelProps) {
     try {
       setTokens(await api.listTokens());
     } catch (err) {
-      onFlash((err as Error).message);
+      onFlash(errorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -50,25 +51,25 @@ export function DevicesPanel({ open, onClose, onFlash }: DevicesPanelProps) {
       setFreshToken(created);
       setDeviceName("");
       await loadTokens();
-      onFlash(`Created token for ${created.name}`);
+      onFlash(t("tokenCreated", { name: created.name }));
     } catch (err) {
-      onFlash((err as Error).message);
+      onFlash(errorMessage(err));
     } finally {
       setCreating(false);
     }
   };
 
   const handleRevoke = async (token: ApiTokenView) => {
-    if (!window.confirm(`Revoke access for "${token.name}"? This device will be disconnected immediately.`)) {
+    if (!window.confirm(t("revokeConfirm", { name: token.name }))) {
       return;
     }
     try {
       await api.revokeToken(token.id);
       setFreshToken((current) => current?.id === token.id ? null : current);
       await loadTokens();
-      onFlash(`Revoked ${token.name}`);
+      onFlash(t("revoked", { name: token.name }));
     } catch (err) {
-      onFlash((err as Error).message);
+      onFlash(errorMessage(err));
     }
   };
 
@@ -78,7 +79,7 @@ export function DevicesPanel({ open, onClose, onFlash }: DevicesPanelProps) {
       setCopiedKey(key);
       setTimeout(() => setCopiedKey(""), 1800);
     } catch {
-      onFlash("Could not copy to clipboard");
+      onFlash(t("copyFailed"));
     }
   };
 
@@ -87,7 +88,7 @@ export function DevicesPanel({ open, onClose, onFlash }: DevicesPanelProps) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
       role="dialog"
       aria-modal="true"
-      aria-label="Devices"
+      aria-label={t("devices")}
       onClick={onClose}
     >
       <div
@@ -97,9 +98,9 @@ export function DevicesPanel({ open, onClose, onFlash }: DevicesPanelProps) {
         <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
           <div className="flex items-center gap-2">
             <KeyRound className="size-5 text-[var(--accent)]" />
-            <h2 className="m-0 text-base font-semibold">Devices</h2>
+            <h2 className="m-0 text-base font-semibold">{t("devices")}</h2>
           </div>
-          <button type="button" className="btn btn-ghost !px-2" onClick={onClose} aria-label="Close">
+          <button type="button" className="btn btn-ghost !px-2" onClick={onClose} aria-label={t("close")}>
             <X className="size-4" />
           </button>
         </div>
@@ -107,30 +108,30 @@ export function DevicesPanel({ open, onClose, onFlash }: DevicesPanelProps) {
         <div className="flex-1 space-y-6 overflow-y-auto p-5">
           {/* Create Device Token */}
           <section>
-            <h3 className="m-0 text-sm font-semibold">Add a device</h3>
+            <h3 className="m-0 text-sm font-semibold">{t("addDeviceHeading")}</h3>
             <p className="mt-1 text-xs text-[var(--muted)]">
-              Create a token to connect an app or device.
+              {t("deviceDescription")}
             </p>
             <form onSubmit={(e) => void handleCreate(e)} className="mt-3 flex gap-2">
               <input
-                className="field text-sm"
-                aria-label="Device name"
-                placeholder="Device name"
+                className="field min-w-0 text-sm"
+                aria-label={t("deviceName")}
+                placeholder={t("deviceName")}
                 value={deviceName}
                 maxLength={48}
                 onChange={(e) => setDeviceName(e.target.value)}
               />
               <button type="submit" className="btn btn-primary shrink-0" disabled={creating || !deviceName.trim()}>
                 <Plus className="size-4" />
-                <span>Add device</span>
+                <span>{t("addDevice")}</span>
               </button>
             </form>
 
             {freshToken && (
               <div className="mt-3 rounded-xl border border-[var(--accent)] bg-[var(--subtle)] p-3.5">
-                <p className="m-0 text-sm font-semibold">{freshToken.name} is ready to connect</p>
+                <p className="m-0 text-sm font-semibold">{t("deviceReady", { name: freshToken.name })}</p>
                 <p className="mt-1 text-xs text-[var(--muted)]">
-                  Copy the details now. The token is shown only once.
+                  {t("copyDetailsNow")}
                 </p>
                 <button
                   type="button"
@@ -138,22 +139,22 @@ export function DevicesPanel({ open, onClose, onFlash }: DevicesPanelProps) {
                   onClick={() => void copyValue("connection-details", `owndrop-setup:v1 ${origin} ${freshToken.token}`)}
                 >
                   {copiedKey === "connection-details" ? <Check className="size-4" /> : <Copy className="size-4" />}
-                  <span>{copiedKey === "connection-details" ? "Copied" : "Copy Connection Details"}</span>
+                  <span>{copiedKey === "connection-details" ? t("copied") : t("copyConnection")}</span>
                 </button>
                 <details className="mt-3 text-xs">
-                  <summary className="cursor-pointer text-[var(--muted)]">Manual setup</summary>
+                  <summary className="cursor-pointer text-[var(--muted)]">{t("manualSetup")}</summary>
                   <dl className="my-2 space-y-2">
                     <div>
-                      <dt>Server URL</dt>
+                      <dt>{t("serverUrl")}</dt>
                       <dd className="m-0 break-all"><code>{origin}</code></dd>
                     </div>
                     <div>
-                      <dt>Device token</dt>
+                      <dt>{t("deviceToken")}</dt>
                       <dd className="m-0 break-all"><code>{freshToken.token}</code></dd>
                     </div>
                   </dl>
                   <button type="button" className="btn btn-outline" onClick={() => void copyValue("fresh", freshToken.token)}>
-                    {copiedKey === "fresh" ? "Copied" : "Copy token"}
+                    {copiedKey === "fresh" ? t("copied") : t("copyToken")}
                   </button>
                 </details>
               </div>
@@ -161,29 +162,29 @@ export function DevicesPanel({ open, onClose, onFlash }: DevicesPanelProps) {
 
             {/* Active Tokens List */}
             <div className="mt-5">
-              <h3 className="mb-2 text-sm font-semibold">Connected devices</h3>
+              <h3 className="mb-2 text-sm font-semibold">{t("connectedDevices")}</h3>
               {loading ? (
-                <p className="text-xs text-[var(--muted)]">Loading devices…</p>
+                <p className="text-xs text-[var(--muted)]">{t("loadingDevices")}</p>
               ) : tokens.length === 0 ? (
-                <p className="text-xs text-[var(--muted)]">No connected devices yet.</p>
+                <p className="text-xs text-[var(--muted)]">{t("noDevices")}</p>
               ) : (
                 <ul className="m-0 list-none divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] p-0">
-                  {tokens.map((t) => (
-                    <li key={t.id} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
+                  {tokens.map((token) => (
+                    <li key={token.id} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
                       <div className="min-w-0">
-                        <div className="text-sm font-medium">{t.name}</div>
+                        <div className="text-sm font-medium">{token.name}</div>
                         <div className="text-xs text-[var(--muted)]">
-                          {t.lastUsedAt ? `Last used ${formatRelativeTime(t.lastUsedAt)}` : "Never used"}
+                          {token.lastUsedAt ? t("lastUsed", { time: formatRelativeTime(token.lastUsedAt) }) : t("neverUsed")}
                         </div>
                       </div>
                       <button
                         type="button"
                         className="btn btn-danger !min-h-8 !px-2.5 text-xs"
-                        aria-label={`Revoke ${t.name}`}
-                        onClick={() => void handleRevoke(t)}
+                        aria-label={t("revokeDevice", { name: token.name })}
+                        onClick={() => void handleRevoke(token)}
                       >
                         <Trash2 className="size-3.5" />
-                        <span>Revoke</span>
+                        <span>{t("revoke")}</span>
                       </button>
                     </li>
                   ))}
@@ -198,7 +199,7 @@ export function DevicesPanel({ open, onClose, onFlash }: DevicesPanelProps) {
             target="_blank"
             rel="noreferrer"
           >
-            Connection guides
+            {t("connectionGuides")}
           </a>
         </div>
       </div>

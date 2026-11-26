@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { Copy, Download, ExternalLink, FileText, Pin, Share2, Trash2, ZoomIn } from "lucide-react";
 import type { DropItem } from "../types";
 import { extractWebUrl, formatBytes, formatRelativeTime, linkHost } from "../utils";
@@ -34,17 +35,17 @@ export function ItemCard({
               type="button"
               onClick={() => onPreviewImage(item)}
               className="group relative mb-2.5 block overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--subtle)] p-0 cursor-zoom-in"
-              aria-label={`Preview ${item.name || "image"}`}
+              aria-label={t("previewFile", { name: item.name || t("image") })}
             >
               <img
                 src={fileHref}
-                alt={item.name || "Uploaded image"}
+                alt={item.name || t("uploadedImage")}
                 loading="lazy"
                 className="max-h-56 w-auto max-w-full object-contain"
               />
               <span className="pointer-events-none absolute right-2 bottom-2 inline-flex items-center gap-1 rounded-md bg-black/70 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
                 <ZoomIn className="size-3.5" />
-                Preview
+                {t("preview")}
               </span>
             </button>
           )}
@@ -130,17 +131,17 @@ export function ItemCard({
               <span>{item.name}</span>
             </a>
           ) : (
-            <div className="text-xs font-medium text-[var(--muted)]">{item.name || "Image"}</div>
+            <div className="text-xs font-medium text-[var(--muted)]">{item.name || t("image")}</div>
           )}
 
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--muted)]">
             {item.pinned && (
               <span className="inline-flex items-center gap-1 font-medium text-[var(--accent)]">
                 <Pin className="size-3" />
-                Pinned
+                {t("pinned")}
               </span>
             )}
-            <span>{item.device || "Unknown"}</span>
+            <span>{item.device || t("unknownDevice")}</span>
             <span>{formatRelativeTime(item.createdAt)}</span>
             <span>{formatBytes(item.size)}</span>
           </div>
@@ -154,7 +155,7 @@ export function ItemCard({
               onClick={() => onCopyText(item.text!)}
             >
               <Copy className="size-4" />
-              <span>Copy</span>
+              <span>{t("copy")}</span>
             </button>
           )}
 
@@ -163,16 +164,17 @@ export function ItemCard({
               type="button"
               className="btn btn-ghost !px-2.5"
               onClick={() => onCopyImage(item)}
+              aria-label={t("copy")}
             >
               <Copy className="size-4" />
-              <span className="hidden sm:inline">Copy</span>
+              <span className="hidden sm:inline">{t("copy")}</span>
             </button>
           )}
 
           {item.type !== "text" && (
-            <a href={fileHref} download={item.name} className="btn btn-ghost !px-2.5">
+            <a href={fileHref} download={item.name} className="btn btn-ghost !px-2.5" aria-label={t("download")}>
               <Download className="size-4" />
-              <span className="hidden sm:inline">Download</span>
+              <span className="hidden sm:inline">{t("download")}</span>
             </a>
           )}
 
@@ -181,11 +183,11 @@ export function ItemCard({
               type="button"
               className="btn btn-ghost !px-2.5"
               onClick={() => onPreviewImage(item)}
-              title="Share / Preview"
-              aria-label="Share or preview image"
+              title={t("sharePreview")}
+              aria-label={t("sharePreviewImage")}
             >
               <Share2 className="size-4" />
-              <span className="sm:hidden">Save</span>
+              <span className="sm:hidden">{t("save")}</span>
             </button>
           )}
 
@@ -194,8 +196,8 @@ export function ItemCard({
             className="btn btn-ghost !px-2.5"
             disabled={pinning}
             onClick={() => onPinToggle(item)}
-            title={item.pinned ? "Unpin" : "Pin to top"}
-            aria-label={item.pinned ? "Unpin" : "Pin to top"}
+            title={item.pinned ? t("unpin") : t("pin")}
+            aria-label={item.pinned ? t("unpin") : t("pin")}
           >
             <Pin className={`size-4 ${item.pinned ? "text-[var(--accent)]" : ""}`} />
           </button>
@@ -204,8 +206,8 @@ export function ItemCard({
             type="button"
             className="btn btn-danger !px-2.5"
             onClick={() => onDelete(item)}
-            aria-label="Delete item"
-            title="Delete"
+            aria-label={t("deleteItem")}
+            title={t("delete")}
           >
             <Trash2 className="size-4" />
           </button>

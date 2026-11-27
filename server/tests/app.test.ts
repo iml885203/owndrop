@@ -223,7 +223,9 @@ describe("OwnDrop Core API", () => {
           `<html><head>
             <meta property="og:title" content="OwnDrop Article" />
             <meta property="og:description" content="Personal cross-device clipboard" />
+            <meta property="og:image" content="/preview.webp" />
             <meta property="og:site_name" content="ExampleOrg" />
+            <meta http-equiv="refresh" content="0;url=https://example.org/destination" />
           </head><body>ok</body></html>`,
           { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } },
         );
@@ -246,7 +248,11 @@ describe("OwnDrop Core API", () => {
 
     const refreshedLink = await h.repo.getItem(linkItem.id);
     expect(refreshedLink?.previewStatus).toBe("ready");
-    expect(refreshedLink?.linkPreview?.title).toBe("OwnDrop Article");
+    expect(refreshedLink?.linkPreview).toMatchObject({
+      title: "OwnDrop Article",
+      description: "Personal cross-device clipboard",
+      image: "https://example.org/preview.webp",
+    });
 
     // 2. Upload file via multipart
     const payload = new TextEncoder().encode("0123456789abcdefghij");

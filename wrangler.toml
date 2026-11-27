@@ -1,7 +1,8 @@
 name = "owndrop"
 main = "server/adapters/cf/worker.ts"
 compatibility_date = "2025-05-01"
-compatibility_flags = ["nodejs_compat"]
+# Resolve public preview URLs through Cloudflare's public routes, including same-zone Workers.
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
 [assets]
 directory = "./web/dist"

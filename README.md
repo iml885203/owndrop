@@ -44,7 +44,7 @@ Most cross-device file transfer tools force you to **open a browser tab on both 
 
 | | Feature | Why it feels great |
 | :---: | :--- | :--- |
-| ⌨️ | **Raycast Extension (macOS & Windows)** | Use `Drop` to send clipboard content and `Browse` to preview, open, or copy your drops. |
+| ⌨️ | **Raycast Extension (macOS & Windows)** | Use `Drop Clipboard` to send clipboard content and `Browse Drops` to preview, open, or copy your drops. |
 | ☁️ | **Cloudflare Free Tier ($0/mo)** | Workers + Static Assets + D1 SQLite + R2 (10 GB free, **$0 egress**) + daily Cron quota cleanup. |
 | 🐳 | **Docker Self-Hostable** | Exact same TypeScript/Hono codebase runs on Node 22 built-in `node:sqlite` (zero native builds). |
 | 🔑 | **Per-Device Revocable Tokens** | Each connected client gets its own `owd_...` token and auto-tags items by device. Revoke one client without breaking the rest. |
@@ -138,7 +138,7 @@ OwnDrop starts on `http://127.0.0.1:4180`. Put Caddy, Nginx, Traefik, or Cloudfl
 
 | Platform | Client | Daily Flow | Setup Guide |
 | :--- | :--- | :--- | :--- |
-| **macOS & Windows** | **Raycast Extension** | `Drop` automatically detects clipboard content; `Browse` previews text, links, and images, plays media, and copies content | [`raycast/README.md`](raycast/README.md) · [`Store Checklist`](docs/raycast-store.md) |
+| **macOS & Windows** | **Raycast Extension** | `Drop Clipboard` automatically detects clipboard content; `Browse Drops` previews text, links, and images, plays media, and copies content | [`raycast/README.md`](raycast/README.md) · [`Store Checklist`](docs/raycast-store.md) |
 | **Terminal / Scripts** | **REST API (`curl`)** | Standard Bearer API (`POST /api/items/text`, `POST /api/items/file`, `GET /api/items/latest`) | [`docs/api.md`](docs/api.md) |
 
 ---

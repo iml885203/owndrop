@@ -6,17 +6,17 @@
 
 2. Click **Copy Connection Details** and paste it into **Connection Details or Device API Token** in extension preferences. For manual setup, paste the token there and set **Server URL (Manual Setup)** separately.
 
-3. Optionally assign hotkeys to **Drop** and **Browse**.
+3. Optionally assign hotkeys to **Copy & Drop**, **Drop Clipboard**, and **Browse Drops**.
 
 ## Commands
 
-- **Drop** automatically sends clipboard text, URLs, or a file. On success, Browse opens with the uploaded item selected and marked **Just dropped**. If the clipboard is empty or unsupported, enter text or choose files in the form. Selected files take priority over text. Clipboard images work when Raycast exposes them as a file; otherwise save the image and choose it in the form.
+- **Drop Clipboard** automatically sends clipboard text, URLs, or a file. On success, Browse Drops opens with the uploaded item selected and marked **Just dropped**. If the clipboard is empty or unsupported, enter text or choose files in the form. Selected files take priority over text. Clipboard images work when Raycast exposes them as a file; otherwise save the image and choose it in the form.
 
-- **Copy & Share** copies the current selection locally, then uploads it using the configured device token. Supports selected text/URLs, Finder files on macOS, and foreground File Explorer files on Windows. A HUD shows copying and sharing status, including the current file number for batch uploads. On Windows, the command closes the Raycast window and immediately acknowledges the hotkey before starting the native helper. The helper validates the actual foreground window and active tab, snapshots the selection, and copies it in one process. It never reads the existing clipboard. Empty or inaccessible selections do not upload anything. All files are copied before uploading; partial upload failures show success/failure counts and leave the local copy intact. Folders can be copied but the upload API rejects them.
+- **Copy & Drop** copies the current selection locally, then uploads it using the configured device token. Supports selected text/URLs, Finder files on macOS, and foreground File Explorer files on Windows. A HUD shows copying and sharing status, including the current file number for batch uploads. On Windows, the command closes the Raycast window and immediately acknowledges the hotkey before starting the native helper. The helper validates the actual foreground window and active tab, snapshots the selection, and copies it in one process. It never reads the existing clipboard. Empty or inaccessible selections do not upload anything. All files are copied before uploading; partial upload failures show success/failure counts and leave the local copy intact. Folders can be copied but the upload API rejects them.
 
-- **Browse** immediately shows locally cached drops and refreshes in the background on launch and every 10 seconds while open. Pinned items come first, then newest first within each group, matching the web app.
+- **Browse Drops** immediately shows locally cached drops and refreshes in the background on launch and every 10 seconds while open. Pinned items come first, then newest first within each group, matching the web app.
 
-In Browse:
+In Browse Drops:
 
 - Text shows its full contents in the detail pane; Enter performs **Copy**.
 
@@ -36,13 +36,13 @@ In Browse:
 
 - Results are cached separately for each query and server/device token. Drops, pins, and deletions update the current cache immediately; failed pin/delete requests roll back. Failed refreshes keep cached results visible and labeled.
 
-## Copy & Share hotkeys and verification
+## Copy & Drop hotkeys and verification
 
-Assign a hotkey yourself in Raycast Settings > Extensions > OwnDrop > Copy & Share.
+Assign a hotkey yourself in Raycast Settings > Extensions > OwnDrop > Copy & Drop.
 
 The extension does not register hotkeys or monitor the clipboard. Keep Cmd+C / Ctrl+C for normal local copies.
 
-Suggested macOS bindings are Cmd+Option+C for Copy & Share and Cmd+Option+V for Browse; check your app conflicts first.
+Suggested macOS bindings are Cmd+Option+C for Copy & Drop and Cmd+Option+V for Browse Drops; check your app conflicts first.
 
 Run `npm ci` in both the repository root and `raycast/`, then from `raycast/` run `npm test`, `npm run lint`, and `npm run build`.
 
@@ -50,7 +50,7 @@ On Windows start the development extension with `npm run dev:windows`.
 
 Manual acceptance (use synthetic data and your test OwnDrop device token):
 
-1. Select text/a URL in a browser or editor, invoke Copy & Share by hotkey, paste locally, and check Browse on another device.
+1. Select text/a URL in a browser or editor, invoke Copy & Drop by hotkey, paste locally, and check Browse Drops on another device.
 
 2. Select one, then multiple files in Finder/File Explorer. Invoke the hotkey, then paste into an empty folder. Confirm every file and its contents survived, including names with spaces, quotes, Unicode, and newlines where supported.
 
@@ -66,7 +66,7 @@ For an isolated Windows multi-file clipboard check, run `powershell.exe -NoProfi
 
 ### Windows 11 Explorer tabs
 
-Explorer automation exposes one Shell entry per tab, and multiple entries can share the same top-level HWND. Copy & Share matches the foreground window and then resolves the active ShellTabWindowClass child against each entry's IShellBrowser window. It never chooses the first/last entry or searches background tabs for a nonempty selection. If the active tab is empty, nothing is uploaded; if tab identity or foreground focus changes during capture, selection is rejected.
+Explorer automation exposes one Shell entry per tab, and multiple entries can share the same top-level HWND. Copy & Drop matches the foreground window and then resolves the active ShellTabWindowClass child against each entry's IShellBrowser window. It never chooses the first/last entry or searches background tabs for a nonempty selection. If the active tab is empty, nothing is uploaded; if tab identity or foreground focus changes during capture, selection is rejected.
 
 Implementation references: [Filee issue #239](https://github.com/KnifeLemon/Filee/issues/239) describes the same inactive-tab failure; [ExplorerTabUtility](https://github.com/w4po/ExplorerTabUtility/blob/master/ExplorerTabUtility/Hooks/ExplorerWatcher.cs) resolves tab handles through Shell service interfaces.
 

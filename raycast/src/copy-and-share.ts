@@ -11,7 +11,7 @@ import { copySelectedFiles, copySelectedExplorerFiles } from "./selection-clipbo
 
 export default async function Command() {
   if (process.platform !== "darwin" && process.platform !== "win32") {
-    await showHUD("Copy & Share requires macOS or Windows");
+    await showHUD("Copy & Drop requires macOS or Windows");
     return;
   }
   let copied = false;
@@ -22,7 +22,7 @@ export default async function Command() {
     if (explorer) await closeMainWindow();
     // Acknowledge before starting the native helper, regardless of selection size.
     // The helper still validates the actual foreground window and active tab.
-    await showHUD("Copy & Share: Copying selection...");
+    await showHUD("Copy & Drop: Copying selection...");
     if (app.bundleId === "com.apple.finder" || explorer) {
       // Never query a background Finder selection or fall back to clipboard contents.
       readingExplorer = explorer;
@@ -38,7 +38,7 @@ export default async function Command() {
       copied = true;
       let succeeded = 0;
       for (const [index, file] of files.entries()) {
-        await showHUD(`Copied ${files.length} files · Sharing ${index + 1}/${files.length}...`);
+        await showHUD(`Copied ${files.length} files · Uploading ${index + 1}/${files.length}...`);
         try {
           await dropFileFromPath(file);
           succeeded++;
@@ -46,7 +46,7 @@ export default async function Command() {
           // Attempt every selected file, and leave the full local copy intact.
         }
       }
-      await showHUD(`Copied ${files.length} files · Shared ${succeeded} · Failed ${files.length - succeeded}`);
+      await showHUD(`Copied ${files.length} files · Dropped ${succeeded} · Failed ${files.length - succeeded}`);
     } else {
       const text = await getSelectedText();
       if (!text.trim()) {
@@ -55,15 +55,15 @@ export default async function Command() {
       }
       await Clipboard.copy(text);
       copied = true;
-      await showHUD("Copied locally · Sharing...");
+      await showHUD("Copied locally · Uploading...");
       await dropText(text);
-      await showHUD("Copied and shared");
+      await showHUD("Copied and dropped");
     }
   } catch {
     if (readingExplorer) {
       await showHUD("Could not read File Explorer selection. Keep Explorer active and retry the hotkey.");
       return;
     }
-    await showHUD(copied ? "Copied locally · Share failed" : "Could not copy selection · Nothing shared");
+    await showHUD(copied ? "Copied locally · Drop failed" : "Could not copy selection · Nothing dropped");
   }
 }

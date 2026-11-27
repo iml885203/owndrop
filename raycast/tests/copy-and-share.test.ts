@@ -83,7 +83,7 @@ it("preserves the local copy when upload fails", async () => {
 
   expect(m.copy).toHaveBeenCalledTimes(1);
 
-  expect(m.hud).toHaveBeenCalledWith("Copied locally · Share failed");
+  expect(m.hud).toHaveBeenCalledWith("Copied locally · Drop failed");
 });
 
 it("does not upload after a failed copy", async () => {
@@ -109,7 +109,7 @@ it("copies all files first and reports partial upload failures", async () => {
 
   expect(m.dropFile.mock.calls).toEqual([["/a"], ["/b"], ["/c"]]);
 
-  expect(m.hud).toHaveBeenCalledWith("Copied 3 files · Shared 2 · Failed 1");
+  expect(m.hud).toHaveBeenCalledWith("Copied 3 files · Dropped 2 · Failed 1");
 
   expect(m.text).not.toHaveBeenCalled();
 });
@@ -168,7 +168,7 @@ it("acknowledges immediately while selection is still pending", async () => {
   );
   const running = command();
   await vi.waitFor(() => expect(m.text).toHaveBeenCalled());
-  expect(m.hud).toHaveBeenCalledWith("Copy & Share: Copying selection...");
+  expect(m.hud).toHaveBeenCalledWith("Copy & Drop: Copying selection...");
   expect(m.hud.mock.invocationCallOrder[0]).toBeLessThan(m.text.mock.invocationCallOrder[0]);
   expect(m.dropText).not.toHaveBeenCalled();
   resolveSelection("selected text");
@@ -183,10 +183,10 @@ it("shows sharing feedback while upload is still pending", async () => {
   );
   const running = command();
   await vi.waitFor(() => expect(m.dropText).toHaveBeenCalled());
-  expect(m.hud).toHaveBeenLastCalledWith("Copied locally · Sharing...");
+  expect(m.hud).toHaveBeenLastCalledWith("Copied locally · Uploading...");
   finishUpload();
   await running;
-  expect(m.hud).toHaveBeenLastCalledWith("Copied and shared");
+  expect(m.hud).toHaveBeenLastCalledWith("Copied and dropped");
 });
 
 it("acknowledges before waiting for Explorer selection and copy", async () => {
@@ -202,7 +202,7 @@ it("acknowledges before waiting for Explorer selection and copy", async () => {
   await vi.waitFor(() => expect(m.explorer).toHaveBeenCalled());
   expect(m.close).toHaveBeenCalledTimes(1);
   expect(m.close.mock.invocationCallOrder[0]).toBeLessThan(m.explorer.mock.invocationCallOrder[0]);
-  expect(m.hud).toHaveBeenCalledWith("Copy & Share: Copying selection...");
+  expect(m.hud).toHaveBeenCalledWith("Copy & Drop: Copying selection...");
   expect(m.hud.mock.invocationCallOrder[0]).toBeLessThan(m.explorer.mock.invocationCallOrder[0]);
   finishSelection(["C:\\a.txt"]);
   await running;

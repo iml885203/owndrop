@@ -35,23 +35,23 @@
   "commands": [
     {
       "name": "drop-clipboard",
-      "title": "Drop",
+      "title": "Drop Clipboard",
       "subtitle": "OwnDrop",
       "description": "Automatically send clipboard text, links, or files, then browse your drops",
       "mode": "view"
     },
     {
       "name": "browse-drops",
-      "title": "Browse",
+      "title": "Browse Drops",
       "subtitle": "OwnDrop",
       "description": "See your newest drops, copy, download, and manage them",
       "mode": "view"
     },
     {
       "name": "copy-and-share",
-      "title": "Copy & Share",
+      "title": "Copy & Drop",
       "subtitle": "OwnDrop",
-      "description": "Copy selected text or files locally, then share to OwnDrop",
+      "description": "Copy selected text or files locally, then upload to OwnDrop",
       "mode": "no-view",
       "platforms": [
         "macOS",

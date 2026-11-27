@@ -32,6 +32,17 @@ Repeat on each computer you want to connect.
 2. Select some text or files, then press your hotkey. A progress message confirms the command is working.
 3. On your other connected device, open **Browse Drops** or the OwnDrop web app to find it.
 
+## Suggested hotkeys
+
+Set these in **Raycast Settings > Extensions > OwnDrop**. They are suggestions, not automatic bindings.
+
+| Command | Windows | macOS |
+| --- | --- | --- |
+| **Copy & Drop** | Ctrl+Alt+C | Cmd+Option+C |
+| **Browse Drops** | Ctrl+Alt+V | Cmd+Option+V |
+
+Run **Drop Clipboard** from Raycast when needed. Keep Ctrl+C / Cmd+C for regular local copying. If a shortcut conflicts with another app, choose a different combination.
+
 Your selection stays copied for normal paste, even if the upload fails. For files, use Finder on macOS or the active File Explorer tab on Windows. Multiple files are supported.
 
 **Regular copy stays local.** OwnDrop sends content only when you run a drop command.

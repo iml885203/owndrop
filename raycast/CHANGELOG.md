@@ -1,5 +1,12 @@
 # OwnDrop Changelog
 
+## [Copy & Share] - 2026-11-28
+
+- Added a no-view **Copy & Share** command for selected text, links, and Finder/File Explorer files, with user-configured hotkeys.
+- Preserve local clipboard copies when sharing fails, reject empty selections without reading old clipboard data, and report per-file upload progress and partial failures.
+- Support native multi-file clipboard copies and resolve the active Windows 11 Explorer tab before sharing.
+- Show immediate processing feedback and combine Windows selection capture and clipboard copying in one helper process.
+
 ## [Initial Version] - {PR_MERGE_DATE}
 
 - Added **Drop** command to automatically send clipboard text, links, or files to your OwnDrop instance, with manual text/file fallback.

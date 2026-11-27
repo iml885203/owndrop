@@ -46,6 +46,17 @@
       "subtitle": "OwnDrop",
       "description": "See your newest drops, copy, download, and manage them",
       "mode": "view"
+    },
+    {
+      "name": "copy-and-share",
+      "title": "Copy & Share",
+      "subtitle": "OwnDrop",
+      "description": "Copy selected text or files locally, then share to OwnDrop",
+      "mode": "no-view",
+      "platforms": [
+        "macOS",
+        "Windows"
+      ]
     }
   ],
   "dependencies": {
@@ -67,6 +78,7 @@
     "build:windows": "ray build --target release -e dist",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "publish": "npx @raycast/api@latest publish"
+    "publish": "npx @raycast/api@latest publish",
+    "test": "vitest run --config vitest.config.ts"
   }
 }

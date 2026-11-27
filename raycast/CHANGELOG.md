@@ -1,5 +1,9 @@
 # OwnDrop Changelog
 
+## [Clearer Setup Guide] - {PR_MERGE_DATE}
+
+- Added illustrated command and connection guides, shorter store descriptions, and setup help beside the connection preferences.
+
 ## [Copy & Drop] - 2026-11-28
 
 - Standardized command titles to **Copy & Drop**, **Drop Clipboard**, and **Browse Drops**; command identifiers stay unchanged to preserve configured hotkeys.

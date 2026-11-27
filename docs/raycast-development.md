@@ -36,7 +36,7 @@ Assign a hotkey yourself in Raycast Settings > Extensions > OwnDrop > Copy & Dro
 
 The extension does not register hotkeys or monitor the clipboard. Keep Cmd+C / Ctrl+C for normal local copies.
 
-Suggested macOS bindings are Cmd+Option+C for Copy & Drop and Cmd+Option+V for Browse Drops; check your app conflicts first.
+Optional macOS examples are Ctrl+Option+Cmd+C for Copy & Drop and Ctrl+Option+Cmd+V for Browse Drops; avoid them when VoiceOver uses Control+Option. See the user guide for the current recommendations.
 
 Run `npm ci` in both the repository root and `raycast/`, then from `raycast/` run `npm test`, `npm run lint`, and `npm run build`.
 
@@ -65,3 +65,13 @@ Explorer automation exposes one Shell entry per tab, and multiple entries can sh
 Implementation references: [Filee issue #239](https://github.com/KnifeLemon/Filee/issues/239) describes the same inactive-tab failure; [ExplorerTabUtility](https://github.com/w4po/ExplorerTabUtility/blob/master/ExplorerTabUtility/Hooks/ExplorerWatcher.cs) resolves tab handles through Shell service interfaces.
 
 Read-only native check: from `raycast/`, run `powershell.exe -NoProfile -STA -File tests/windows-explorer-tabs.ps1` with a tabbed Explorer window open. This verifies active-tab mapping without reading clipboard/file contents or uploading. Also manually verify tab 2 with selected files while tab 1 is empty, then tab 2 empty while tab 1 retains a selection. Only the visible active tab should be shared.
+
+## Hotkey review (2026-11-28)
+
+The suggested bindings prioritize avoiding default operating-system shortcuts. Application-specific shortcuts are outside the selection criterion; users must still check their installed software. No runtime bindings are registered or changed.
+
+- Windows examples: Ctrl+Alt+C / Ctrl+Alt+V. These are not listed as standard system actions in [Microsoft's Windows shortcut reference](https://support.microsoft.com/en-gb/accessibility/windows/keyboard-shortcuts-in-windows). This is a documentation check, not proof that a combination is free. Keep Win+V for Windows clipboard history, Ctrl+C/V for local copy/paste, and avoid input-method shortcuts.
+- macOS examples: Ctrl+Option+Cmd+C / Ctrl+Option+Cmd+V. The extra Control modifier avoids Option+Cmd+C/V, which have existing style/paste and Finder uses in [Apple's reference](https://support.apple.com/en-us/102650).
+- VoiceOver caveat: its modifier may be Control+Option. [VO+Cmd+C](https://support.apple.com/en-sg/guide/voiceover/vo14100/mac) searches for style changes, and [VO+Cmd+V](https://support.apple.com/en-lamr/guide/voiceover/cpvokys08/mac) searches visited links. VoiceOver users should choose different keys or aliases.
+- App conflicts remain possible: JetBrains uses Ctrl+Alt+C/V for extract constant/variable, and even Ctrl+Alt+Shift+C/V already mean copy reference/paste plain text in its [Windows keymap](https://www.jetbrains.com/help/idea/reference-keymap-win-default.html). Simply adding Shift is not a universal fix.
+- [Raycast aliases](https://manual.raycast.com/command-aliases-and-hotkeys) offer access within Raycast without reserving another global combination.

@@ -34,14 +34,16 @@ Repeat on each computer you want to connect.
 
 ## Suggested hotkeys
 
-Set these in **Raycast Settings > Extensions > OwnDrop**. They are suggestions, not automatic bindings.
+Set these in **Raycast Settings > Extensions > OwnDrop**. These optional examples avoid the standard copy/paste and Finder combinations; they are not automatic bindings.
 
 | Command | Windows | macOS |
 | --- | --- | --- |
-| **Copy & Drop** | Ctrl+Alt+C | Cmd+Option+C |
-| **Browse Drops** | Ctrl+Alt+V | Cmd+Option+V |
+| **Copy & Drop** | Ctrl+Alt+C | Ctrl+Option+Cmd+C |
+| **Browse Drops** | Ctrl+Alt+V | Ctrl+Option+Cmd+V |
 
-Run **Drop Clipboard** from Raycast when needed. Keep Ctrl+C / Cmd+C for regular local copying. If a shortcut conflicts with another app, choose a different combination.
+Run **Drop Clipboard** from Raycast when needed. Keep Ctrl+C / Cmd+C for regular local copying. If you use VoiceOver, AltGr, or an app that already uses these keys, choose another hotkey or a Raycast alias instead.
+
+Checked against [Windows shortcuts](https://support.microsoft.com/en-gb/accessibility/windows/keyboard-shortcuts-in-windows) and [Mac shortcuts](https://support.apple.com/en-us/102650). No global hotkey is guaranteed to be free on every computer.
 
 Your selection stays copied for normal paste, even if the upload fails. For files, use Finder on macOS or the active File Explorer tab on Windows. Multiple files are supported.
 

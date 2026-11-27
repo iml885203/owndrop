@@ -3,6 +3,7 @@
 ## [Clearer Setup Guide] - {PR_MERGE_DATE}
 
 - Added illustrated command and connection guides, shorter store descriptions, and setup help beside the connection preferences.
+- Documented optional hotkeys that preserve standard OS copy/paste, including notes for VoiceOver, input methods, and existing app bindings.
 
 ## [Copy & Drop] - 2026-11-28
 
